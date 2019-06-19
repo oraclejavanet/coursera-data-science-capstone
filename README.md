@@ -1,12 +1,29 @@
-# Coursera Data Science Capstone Project
+# Coursera Data Science Capstone
 
 **Jeffrey M. Hunter**
 
 June 19, 2019
 
-## Course Project
+## Introduction
 
-Course repository for the Coursera Data Science Specialization Capstone Project.
+Course repository for the Coursera Data Science Specialization Capstone as part
+of the Data Science Specialization offered through Coursera from Johns Hopkins
+University.
+
+Pending: https://github.com/englianhu/Coursera-Data-Science-Capstone
+
+### Milestone Report
+
+*Exploratory Data Analysis and Modeling*
+
+Links
+
+* Link 1
+* Link 2
+* Link 3
+
+
+### Final Project Submission
 
 The goal for this final project assignment is to implement a learning model for
 text prediction. Using the text prediction algorithm, create a product in Shiny

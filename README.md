@@ -37,7 +37,7 @@ developed Shiny application as well as the RStudio Presenter files.
 The training data set to get you started that will be the basis for most of the
 capstone can be found below:
 
-* [https://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip](https://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip)
+* [Capstone Dataset](https://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip)
 
 ### Links
 

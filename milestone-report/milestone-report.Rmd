@@ -1,2 +1,49 @@
+---
 title: "Coursera Capstone Project Milestone Report"
-subtitle: "Data Science Capstone by Johns Hopkins University"
+subtitle: "Data Science Specialization from Johns Hopkins University"
+author: "Jeffrey M. Hunter"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    theme: cosmo
+    keep_md: no
+    df_print: paged
+  pdf_document:
+    toc: yes
+    df_print: kable
+    number_sections: false
+    fig_caption: yes
+    highlight: tango
+    dev: pdf
+  word_document:
+    toc: yes
+    df_print: paged
+    keep_md: no
+---
+
+```{r setup, include = FALSE}
+# set working directory
+setwd("~/repos/coursera/github-assignments/coursera-data-science-capstone/milestone-report")
+
+# set knitr options
+knitr::opts_chunk$set(echo = TRUE, fig.path = 'figures/')
+
+# clear the global workspace (including hidden objects)
+rm(list = ls(all.names = TRUE))
+
+# free up memory and display statistics on free memory
+gc()
+```
+
+## Synopsis
+
+This is the Milestone Report for the Coursera Data Science Capstone project.
+The goal of the capstone project is to create a predictive text model using a
+large text corpus of documents as training data. Natural language processing
+techniques will be used to perform the analysis and build the predictive model.
+
+This milestone report describes the major features of the training data with
+our exploratory data analysis and summarizes our plans for creating the
+predictive model.

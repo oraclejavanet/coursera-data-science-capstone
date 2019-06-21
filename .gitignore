@@ -23,6 +23,7 @@
 
 # RStudio Project
 data/
+supplements/
 packrat/lib*/
 .Rproj.user
 

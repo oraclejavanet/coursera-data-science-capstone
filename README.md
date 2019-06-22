@@ -2,13 +2,12 @@
 
 **Jeffrey M. Hunter**
 
-June 19, 2019
+June 24, 2019
 
 ## Introduction
 
-Course repository for the Coursera Data Science Specialization Capstone as part
-of the Data Science Specialization offered through Coursera from Johns Hopkins
-University.
+Course repository for the Data Science Specialization Capstone offered
+through Coursera from Johns Hopkins University.
 
 ### Course Dataset
 

@@ -23,27 +23,140 @@ output:
     keep_md: no
 ---
 
-```{r setup, include = FALSE}
-# set working directory
-setwd("~/repos/coursera/github-assignments/coursera-data-science-capstone/milestone-report")
+## Synopsis
 
+This is the Milestone Report for week 2 of the Coursera Data Science Capstone
+project.
+
+The objective of this report is to develop an understanding of the various
+statistical properties of the data set that can later be used when building the
+prediction model for the final data product. Using exploratory data analysis,
+this report describes the major features of the training data and then
+summarizes my plans for creating the predictive model.
+
+The following tasks are performed in this report:
+
+1. Download and then load the data
+1. Provide a summary of the data sets
+1. Combine the multiple data sets (corpora) into a single document corpus
+1. Clean the data
+1. Perform exploratory data analysis and report unexpected findings
+1. Summarize a plan and provide next steps for creating a predictive model that
+   will be used for the final data product
+
+## Environment Setup
+
+Prepare the session by loading all necessary packages and clearing the global
+workspace (including hidden objects).
+
+```{r load-packages, message = FALSE, echo = TRUE}
+library(knitr)
+library(ggplot2)
+library(rJava)
+library(dplyr)
+library(tm)
+library(ngram)
+rm(list = ls(all.names = TRUE))
+setwd("~/repos/coursera/github-assignments/coursera-data-science-capstone/milestone-report")
+```
+
+```{r setup, include = FALSE}
 # set knitr options
 knitr::opts_chunk$set(echo = TRUE, fig.path = 'figures/')
 
-# clear the global workspace (including hidden objects)
-rm(list = ls(all.names = TRUE))
-
 # free up memory and display statistics on free memory
 gc()
+
+# disable scientific notation for numbers
+options(scipen = 1)
+
+# detect OS
+switch(Sys.info()[['sysname']],
+    Windows = {os = "Microsoft Windows"},
+    Linux = {os = "Linux"},
+    Darwin = {os = "macOS"})
+
+# knit hook to allow partial output from a code chunk
+hook_output <- knit_hooks$get("output")
+knit_hooks$set(output = function(x, options) {
+  lines <- options$output.lines
+  if (is.null(lines)) {
+    return(hook_output(x, options)) # pass to default hook
+  }
+  x <- unlist(strsplit(x, "\n"))
+  more <- "..."
+  if (length(lines) == 1) { # first n lines
+    if (length(x) > lines) {
+      # truncate the output, but add ....
+      x <- c(head(x, lines), more)
+    }
+  } else {
+    x <- c(more, x[lines], more)
+  }
+  # paste these lines together
+  x <- paste(c(x, ""), collapse = "\n")
+  hook_output(x, options)
+})
 ```
 
-## Synopsis
+## Load the Data
 
-This is the Milestone Report for the Coursera Data Science Capstone project.
-The goal of the capstone project is to create a predictive text model using a
-large text corpus of documents as training data. Natural language processing
-techniques will be used to perform the analysis and build the predictive model.
+Download and unzip the training data. The data sets consist of text from three
+different sources:
 
-This milestone report describes the major features of the training data with
-our exploratory data analysis and summarizes our plans for creating the
-predictive model.
+1. Blogs
+1. News
+1. Twitter
+
+The text data are provided in four different languages:
+
+1. German
+1. English - United States
+1. Finnish
+1. Russian
+
+This project will only focus on the English data sets.
+
+```{r load-data, echo = TRUE}
+trainURL <- "https://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip"
+trainDataFile <- "data/Coursera-SwiftKey.zip"
+
+if (!file.exists('data')) {
+    dir.create('data')
+}
+
+if (!file.exists("data/final/en_US")) {
+    tempFile <- tempfile()
+    download.file(trainURL, tempFile)
+    unzip(tempFile, exdir = "data")
+    unlink(tempFile)
+}
+
+# blogs
+blogsFileName <- "data/final/en_US/en_US.blogs.txt"
+con <- file(blogsFileName, open = "r")
+blogs <- readLines(con, encoding = "UTF-8", skipNul = TRUE)
+close(con)
+
+# news
+newsFileName <- "data/final/en_US/en_US.news.txt"
+con <- file(newsFileName, open = "r")
+news <- readLines(con, encoding = "UTF-8", skipNul = TRUE)
+close(con)
+
+# twitter
+twitterFileName <- "data/final/en_US/en_US.twitter.txt"
+con <- file(twitterFileName, open = "r")
+twitter <- readLines(con, encoding = "UTF-8", skipNul = TRUE)
+close(con)
+
+rm(con)
+```
+
+## Data Summary
+
+
+
+
+
+

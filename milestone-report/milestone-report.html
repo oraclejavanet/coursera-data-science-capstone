@@ -2571,6 +2571,15 @@ window.onload = function() {
   PagedTableDoc.initAll();
 };
 </script>
+<script>$(document).ready(function(){
+    if (typeof $('[data-toggle="tooltip"]').tooltip === 'function') {
+        $('[data-toggle="tooltip"]').tooltip();
+    }
+    if ($('[data-toggle="popover"]').popover === 'function') {
+        $('[data-toggle="popover"]').popover();
+    }
+});
+</script>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -2617,6 +2626,13 @@ h6 {
 }
 </style>
 
+<style type="text/css">blockquote {
+padding: 10px 20px;
+margin: 0 0 20px;
+font-size: 15px;
+border-left: 5px solid #eee;
+}
+</style>
 
 
 
@@ -2834,7 +2850,7 @@ div.tocify {
 <h1 class="title toc-ignore">Coursera Capstone Project Milestone Report</h1>
 <h3 class="subtitle">Data Science Specialization from Johns Hopkins University</h3>
 <h4 class="author">Jeffrey M. Hunter</h4>
-<h4 class="date">21 June, 2019</h4>
+<h4 class="date">25 June, 2019</h4>
 
 </div>
 
@@ -2842,21 +2858,21 @@ div.tocify {
 <div id="synopsis" class="section level2">
 <h2>Synopsis</h2>
 <p>This is the Milestone Report for week 2 of the Coursera Data Science Capstone project.</p>
-<p>The objective of this report is to develop an understanding of the various statistical properties of the data set that can later be used when building the prediction model for the final data product. Using exploratory data analysis, this report describes the major features of the training data and then summarizes my plans for creating the predictive model.</p>
-<p>The following tasks are performed in this report:</p>
+<p>The objective of this report is to develop an understanding of the various statistical properties of the data set that can later be used when building the prediction model for the final data product - the Shiny application. Using exploratory data analysis, this report describes the major features of the training data and then summarizes my plans for creating the predictive model.</p>
+<p>The model will be trained using a unified document corpus compiled from the following three sources:</p>
 <ol style="list-style-type: decimal">
-<li>Download and then load the data</li>
-<li>Provide a summary of the data sets</li>
-<li>Combine the multiple data sets (corpora) into a single document corpus</li>
-<li>Clean the data</li>
-<li>Perform exploratory data analysis and report unexpected findings</li>
-<li>Summarize a plan and provide next steps for creating a predictive model that will be used for the final data product</li>
+<li>Blogs</li>
+<li>News</li>
+<li>Twitter</li>
 </ol>
+<p>The provided text data are provided in four different languages. This project will only focus on the English corpora.</p>
 </div>
 <div id="environment-setup" class="section level2">
 <h2>Environment Setup</h2>
 <p>Prepare the session by loading all necessary packages and clearing the global workspace (including hidden objects).</p>
 <pre class="r"><code>library(knitr)
+library(kableExtra)
+library(stringi)
 library(ggplot2)
 library(rJava)
 library(dplyr)
@@ -2867,20 +2883,7 @@ setwd(&quot;~/repos/coursera/github-assignments/coursera-data-science-capstone/m
 </div>
 <div id="load-the-data" class="section level2">
 <h2>Load the Data</h2>
-<p>Download and unzip the training data. The data sets consist of text from three different sources:</p>
-<ol style="list-style-type: decimal">
-<li>Blogs</li>
-<li>News</li>
-<li>Twitter</li>
-</ol>
-<p>The text data are provided in four different languages:</p>
-<ol style="list-style-type: decimal">
-<li>German</li>
-<li>English - United States</li>
-<li>Finnish</li>
-<li>Russian</li>
-</ol>
-<p>This project will only focus on the English data sets.</p>
+<p>Download, unzip and load the training data.</p>
 <pre class="r"><code>trainURL &lt;- &quot;https://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip&quot;
 trainDataFile &lt;- &quot;data/Coursera-SwiftKey.zip&quot;
 
@@ -2915,8 +2918,182 @@ close(con)
 
 rm(con)</code></pre>
 </div>
-<div id="data-summary" class="section level2">
-<h2>Data Summary</h2>
+<div id="basic-data-summary" class="section level2">
+<h2>Basic Data Summary</h2>
+<p>Prior to building the unified document corpus and cleaning the data, provide a basic summary of the three text corpora including file size, number of lines, number of characters, and number of words. Also include basic statistics on the number of words per line (min, mean, and max).</p>
+<table class="table" style>
+<caption>
+Initial Data Summary
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+File
+</th>
+<th style="text-align:right;">
+FileSize
+</th>
+<th style="text-align:right;">
+Lines
+</th>
+<th style="text-align:right;">
+Characters
+</th>
+<th style="text-align:right;">
+Words
+</th>
+<th style="text-align:right;">
+WPL.Min
+</th>
+<th style="text-align:right;">
+WPL.Mean
+</th>
+<th style="text-align:right;">
+WPL.Max
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+en_US.blogs.txt
+</td>
+<td style="text-align:right;">
+200 MB
+</td>
+<td style="text-align:right;">
+899288
+</td>
+<td style="text-align:right;">
+206824505
+</td>
+<td style="text-align:right;">
+37570839
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+42
+</td>
+<td style="text-align:right;">
+6726
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+en_US.news.txt
+</td>
+<td style="text-align:right;">
+196 MB
+</td>
+<td style="text-align:right;">
+1010242
+</td>
+<td style="text-align:right;">
+203223159
+</td>
+<td style="text-align:right;">
+34494539
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+34
+</td>
+<td style="text-align:right;">
+1796
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+en_US.twitter.txt
+</td>
+<td style="text-align:right;">
+159 MB
+</td>
+<td style="text-align:right;">
+2360148
+</td>
+<td style="text-align:right;">
+162096241
+</td>
+<td style="text-align:right;">
+30451170
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+47
+</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>The source code for the above chart is attached as <a href="#a.1-basic-data-summary">A.1 Basic Data Summary</a> in the Appendix section.</p>
+</blockquote>
+<p>An initial investigation of the data shows that blogs tend to have more words per line while twitter has the least words per line. The lower number of words per line for the Twitter data is expected given that a tweet is limited to a certain number of characters. Even when Twitter doubled its character count from 140 to 280 characters in 2017, research shows that only 1% of tweets hit the 280-character limit, and only 12% of tweets are longer than 140 characters.</p>
+<p>Another important factor identified in this initial investigation of the data shows that the text files are fairly large. To improve processing time, only 10% of the entries for each file will be used which should allow faster processing time when building the model and running the Shiny application.</p>
+</div>
+<div id="clean-sample-data" class="section level2">
+<h2>Clean Sample Data</h2>
+<p>Pending</p>
+</div>
+<div id="build-corpus" class="section level2">
+<h2>Build Corpus</h2>
+<p>Pending</p>
+</div>
+<div id="exploratory-data-analysis" class="section level2">
+<h2>Exploratory Data Analysis</h2>
+<p>Pending</p>
+</div>
+<div id="way-forward" class="section level2">
+<h2>Way Forward</h2>
+<p>Pending</p>
+</div>
+<div id="appendix" class="section level2">
+<h2>Appendix</h2>
+<div id="a.1-basic-data-summary" class="section level3">
+<h3>A.1 Basic Data Summary</h3>
+<p>Provide a basic summary of the three text corpora.</p>
+<pre class="r"><code># file size
+fileSizeMB &lt;- round(file.info(c(blogsFileName,
+                                newsFileName,
+                                twitterFileName))$size / 1024 ^ 2)
+
+# num lines per file
+numLines &lt;- sapply(list(blogs, news, twitter), length)
+
+# num characters per file
+numChars &lt;- sapply(list(nchar(blogs), nchar(news), nchar(twitter)), sum)
+
+# num words per file
+numWords &lt;- sapply(list(blogs, news, twitter), stri_stats_latex)[4,]
+
+# words per line summary
+wplSummary = sapply(list(blogs, news, twitter),
+             function(x) summary(stri_count_words(x))[c('Min.', 'Mean', 'Max.')])
+rownames(wplSummary) = c('WPL.Min', 'WPL.Mean', 'WPL.Max')
+
+summary &lt;- data.frame(
+    File = c(&quot;en_US.blogs.txt&quot;, &quot;en_US.news.txt&quot;, &quot;en_US.twitter.txt&quot;),
+    FileSize = paste(fileSizeMB, &quot; MB&quot;),
+    Lines = numLines,
+    Characters = numChars,
+    Words = numWords,
+    t(rbind(round(wplSummary)))
+)
+
+kable(summary,
+      row.names = FALSE,
+      align = c(&quot;l&quot;, rep(&quot;r&quot;, 7)),
+      caption = &quot;Initial Data Summary&quot;) %&gt;% kable_styling(position = &quot;left&quot;)</code></pre>
+</div>
 </div>
 
 

@@ -10,6 +10,7 @@ output:
     theme: cosmo
     keep_md: no
     df_print: paged
+    css: css/custom.css
   pdf_document:
     toc: yes
     df_print: kable
@@ -30,19 +31,19 @@ project.
 
 The objective of this report is to develop an understanding of the various
 statistical properties of the data set that can later be used when building the
-prediction model for the final data product. Using exploratory data analysis,
-this report describes the major features of the training data and then
-summarizes my plans for creating the predictive model.
+prediction model for the final data product - the Shiny application. Using 
+exploratory data analysis, this report describes the major features of the
+training data and then summarizes my plans for creating the predictive model.
 
-The following tasks are performed in this report:
+The model will be trained using a unified document corpus compiled from the
+following three sources:
 
-1. Download and then load the data
-1. Provide a summary of the data sets
-1. Combine the multiple data sets (corpora) into a single document corpus
-1. Clean the data
-1. Perform exploratory data analysis and report unexpected findings
-1. Summarize a plan and provide next steps for creating a predictive model that
-   will be used for the final data product
+1. Blogs
+1. News
+1. Twitter
+
+The provided text data are provided in four different languages. This project
+will only focus on the English corpora.
 
 ## Environment Setup
 
@@ -51,6 +52,8 @@ workspace (including hidden objects).
 
 ```{r load-packages, message = FALSE, echo = TRUE}
 library(knitr)
+library(kableExtra)
+library(stringi)
 library(ggplot2)
 library(rJava)
 library(dplyr)
@@ -101,21 +104,7 @@ knit_hooks$set(output = function(x, options) {
 
 ## Load the Data
 
-Download and unzip the training data. The data sets consist of text from three
-different sources:
-
-1. Blogs
-1. News
-1. Twitter
-
-The text data are provided in four different languages:
-
-1. German
-1. English - United States
-1. Finnish
-1. Russian
-
-This project will only focus on the English data sets.
+Download, unzip and load the training data.
 
 ```{r load-data, echo = TRUE}
 trainURL <- "https://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip"
@@ -153,8 +142,86 @@ close(con)
 rm(con)
 ```
 
-## Data Summary
+## Basic Data Summary
 
+Prior to building the unified document corpus and cleaning the data, provide a
+basic summary of the three text corpora including file size, number of lines,
+number of characters, and number of words. Also include basic statistics on the
+number of words per line (min, mean, and max).
+
+```{r initial-data-summary, echo = FALSE, results = 'hold'}
+# file size
+fileSizeMB <- round(file.info(c(blogsFileName,
+                                newsFileName,
+                                twitterFileName))$size / 1024 ^ 2)
+
+# num lines per file
+numLines <- sapply(list(blogs, news, twitter), length)
+
+# num characters per file
+numChars <- sapply(list(nchar(blogs), nchar(news), nchar(twitter)), sum)
+
+# num words per file
+numWords <- sapply(list(blogs, news, twitter), stri_stats_latex)[4,]
+
+# words per line summary
+wplSummary = sapply(list(blogs, news, twitter),
+             function(x) summary(stri_count_words(x))[c('Min.', 'Mean', 'Max.')])
+rownames(wplSummary) = c('WPL.Min', 'WPL.Mean', 'WPL.Max')
+
+summary <- data.frame(
+    File = c("en_US.blogs.txt", "en_US.news.txt", "en_US.twitter.txt"),
+    FileSize = paste(fileSizeMB, " MB"),
+    Lines = numLines,
+    Characters = numChars,
+    Words = numWords,
+    t(rbind(round(wplSummary)))
+)
+
+kable(summary,
+      row.names = FALSE,
+      align = c("l", rep("r", 7)),
+      caption = "Initial Data Summary") %>% kable_styling(position = "left")
+```
+
+> The source code for the above chart is attached as [A.1 Basic Data Summary](#a.1-basic-data-summary) in the Appendix section.
+
+An initial investigation of the data shows that blogs tend to have more words
+per line while twitter has the least words per line. The lower number of words
+per line for the Twitter data is expected given that a tweet is limited to a
+certain  number of characters. Even when Twitter doubled its character count
+from 140 to 280 characters in 2017, research shows that only 1% of tweets hit
+the 280-character limit, and only 12% of tweets are longer than 140 characters.
+
+Another important factor identified in this initial investigation of the data
+shows that the text files are fairly large. To improve processing time, only
+10% of the entries for each file will be used which should allow faster 
+processing time when building the model and running the Shiny application.
+
+## Clean Sample Data
+
+Pending
+
+## Build Corpus
+
+Pending
+
+## Exploratory Data Analysis
+
+Pending
+
+## Way Forward
+
+Pending
+
+## Appendix
+
+### A.1 Basic Data Summary
+
+Provide a basic summary of the three text corpora.
+
+```{r initial-data-summary-appendix, ref.label = 'initial-data-summary', echo = TRUE, eval = FALSE}
+```
 
 
 

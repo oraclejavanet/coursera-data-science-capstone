@@ -150,6 +150,8 @@ basic summary of the three text corpora including file size, number of lines,
 number of characters, and number of words. Also include basic statistics on the
 number of words per line (min, mean, and max).
 
+### Initial Data Summary
+
 ```{r initial-data-summary-table, echo = FALSE, results = 'hold'}
 # file size
 fileSizeMB <- round(file.info(c(blogsFileName,
@@ -185,7 +187,7 @@ summary <- data.frame(
 kable(summary,
       row.names = FALSE,
       align = c("l", rep("r", 7)),
-      caption = "Initial Data Summary") %>% kable_styling(position = "left")
+      caption = "") %>% kable_styling(position = "left")
 ```
 
 > The source code for the above table is attached as [A.1 Basic Data Summary](#a.1-basic-data-summary) in the Appendix section.
@@ -204,33 +206,39 @@ shows that the text files are fairly large. To improve processing time, only
 10% of the entries for each file will be used which should allow faster 
 processing time when building the model and running the Shiny application.
 
+### Histogram of Words per Line
+
 ```{r initial-data-summary-plot, echo = FALSE, results = 'hold'}
 plot1 <- qplot(wpl[[1]],
                geom = "histogram",
                main = "US Blogs",
-               xlab = "Words Per Line",
+               xlab = "Words per Line",
                ylab = "Frequency",
                binwidth = 5)
 
 plot2 <- qplot(wpl[[2]],
                geom = "histogram",
                main = "US News",
-               xlab = "Words Per Line",
+               xlab = "Words per Line",
                ylab = "Frequency",
                binwidth = 5)
 
 plot3 <- qplot(wpl[[3]],
                geom = "histogram",
                main = "US Twitter",
-               xlab = "Words Per Line",
+               xlab = "Words per Line",
                ylab = "Frequency",
                binwidth = 1)
 
-myPlotList = list(plot1, plot2, plot3)
-do.call(grid.arrange, c(myPlotList, list(ncol = 1)))
+plotList = list(plot1, plot2, plot3)
+do.call(grid.arrange, c(plotList, list(ncol = 1)))
 ```
 
-> The source code for the above plot is attached as [A.2 Basic Data Histogram](#a.2-basic-data-histogram) in the Appendix section.
+> The source code for the above plot is attached as [A.2 Histogram of Words per Line](#a.2-histogram-of-words-per-line) in the Appendix section.
+
+The above histograms appear to confirm that the average number of words per line
+for all three text corpora is relatively low. This may support a general trend
+towards short and concise communications on digital platforms.
 
 ## Clean Sample Data
 
@@ -259,7 +267,7 @@ Basic summary of the three text corpora.
 ```{r initial-data-summary-table-appendix, ref.label = 'initial-data-summary-table', echo = TRUE, eval = FALSE}
 ```
 
-### A.2 Basic Data Histogram
+### A.2 Histogram of Words per Line
 
 Histogram of words per line for the three text corpora.
 

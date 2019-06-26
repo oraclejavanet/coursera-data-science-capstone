@@ -55,6 +55,7 @@ library(knitr)
 library(kableExtra)
 library(stringi)
 library(ggplot2)
+library(gridExtra)
 library(rJava)
 library(dplyr)
 library(tm)
@@ -149,7 +150,7 @@ basic summary of the three text corpora including file size, number of lines,
 number of characters, and number of words. Also include basic statistics on the
 number of words per line (min, mean, and max).
 
-```{r initial-data-summary, echo = FALSE, results = 'hold'}
+```{r initial-data-summary-table, echo = FALSE, results = 'hold'}
 # file size
 fileSizeMB <- round(file.info(c(blogsFileName,
                                 newsFileName,
@@ -163,6 +164,9 @@ numChars <- sapply(list(nchar(blogs), nchar(news), nchar(twitter)), sum)
 
 # num words per file
 numWords <- sapply(list(blogs, news, twitter), stri_stats_latex)[4,]
+
+# words per line
+wpl <- lapply(list(blogs, news, twitter), function(x) stri_count_words(x))
 
 # words per line summary
 wplSummary = sapply(list(blogs, news, twitter),
@@ -184,21 +188,53 @@ kable(summary,
       caption = "Initial Data Summary") %>% kable_styling(position = "left")
 ```
 
-> The source code for the above chart is attached as [A.1 Basic Data Summary](#a.1-basic-data-summary) in the Appendix section.
+> The source code for the above table is attached as [A.1 Basic Data Summary](#a.1-basic-data-summary) in the Appendix section.
 
 An initial investigation of the data shows that blogs tend to have more words
-per line while twitter has the least words per line. The lower number of words
-per line for the Twitter data is expected given that a tweet is limited to a
-certain  number of characters. Even when Twitter doubled its character count
-from 140 to 280 characters in 2017, research shows that only 1% of tweets hit
-the 280-character limit, and only 12% of tweets are longer than 140 characters.
+per line, followed by news and then twitter which has the least words per line.
+The lower number of words per line for the Twitter data is expected given that a
+tweet is limited to a certain  number of characters. Even when Twitter doubled
+its character count from 140 to 280 characters in 2017, research shows that only
+1% of tweets hit the 280-character limit, and only 12% of tweets are longer than
+140 characters. Perhaps after so many years, users were simply trained to the
+140-character limit.
 
 Another important factor identified in this initial investigation of the data
 shows that the text files are fairly large. To improve processing time, only
 10% of the entries for each file will be used which should allow faster 
 processing time when building the model and running the Shiny application.
 
+```{r initial-data-summary-plot, echo = FALSE, results = 'hold'}
+plot1 <- qplot(wpl[[1]],
+               geom = "histogram",
+               main = "US Blogs",
+               xlab = "Words Per Line",
+               ylab = "Frequency",
+               binwidth = 5)
+
+plot2 <- qplot(wpl[[2]],
+               geom = "histogram",
+               main = "US News",
+               xlab = "Words Per Line",
+               ylab = "Frequency",
+               binwidth = 5)
+
+plot3 <- qplot(wpl[[3]],
+               geom = "histogram",
+               main = "US Twitter",
+               xlab = "Words Per Line",
+               ylab = "Frequency",
+               binwidth = 1)
+
+myPlotList = list(plot1, plot2, plot3)
+do.call(grid.arrange, c(myPlotList, list(ncol = 1)))
+```
+
+> The source code for the above plot is attached as [A.2 Basic Data Histogram](#a.2-basic-data-histogram) in the Appendix section.
+
 ## Clean Sample Data
+
+Prior to performing exploratory data analysis, the data should first be cleaned.
 
 Pending
 
@@ -218,12 +254,17 @@ Pending
 
 ### A.1 Basic Data Summary
 
-Provide a basic summary of the three text corpora.
+Basic summary of the three text corpora.
 
-```{r initial-data-summary-appendix, ref.label = 'initial-data-summary', echo = TRUE, eval = FALSE}
+```{r initial-data-summary-table-appendix, ref.label = 'initial-data-summary-table', echo = TRUE, eval = FALSE}
 ```
 
+### A.2 Basic Data Histogram
 
+Histogram of words per line for the three text corpora.
+
+```{r initial-data-summary-plot-appendix, ref.label = 'initial-data-summary-plot', echo = TRUE, eval = FALSE}
+```
 
 
 

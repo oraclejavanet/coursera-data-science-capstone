@@ -2850,7 +2850,7 @@ div.tocify {
 <h1 class="title toc-ignore">Coursera Capstone Project Milestone Report</h1>
 <h3 class="subtitle">Data Science Specialization from Johns Hopkins University</h3>
 <h4 class="author">Jeffrey M. Hunter</h4>
-<h4 class="date">26 June, 2019</h4>
+<h4 class="date">27 June, 2019</h4>
 
 </div>
 
@@ -2921,7 +2921,7 @@ rm(con)</code></pre>
 </div>
 <div id="basic-data-summary" class="section level2">
 <h2>Basic Data Summary</h2>
-<p>Prior to building the unified document corpus and cleaning the data, provide a basic summary of the three text corpora including file size, number of lines, number of characters, and number of words. Also include basic statistics on the number of words per line (min, mean, and max).</p>
+<p>Prior to building the unified document corpus and cleaning the data, a basic summary of the three text corpora is being provided which includes file sizes, number of lines, number of characters, and number of words for each source file. Also included are basic statistics on the number of words per line (min, mean, and max).</p>
 <div id="initial-data-summary" class="section level3">
 <h3>Initial Data Summary</h3>
 <table class="table" style>
@@ -3039,8 +3039,8 @@ en_US.twitter.txt
 <blockquote>
 <p>The source code for the above table is attached as <a href="#a.1-basic-data-summary">A.1 Basic Data Summary</a> in the Appendix section.</p>
 </blockquote>
-<p>An initial investigation of the data shows that blogs tend to have more words per line, followed by news and then twitter which has the least words per line. The lower number of words per line for the Twitter data is expected given that a tweet is limited to a certain number of characters. Even when Twitter doubled its character count from 140 to 280 characters in 2017, research shows that only 1% of tweets hit the 280-character limit, and only 12% of tweets are longer than 140 characters. Perhaps after so many years, users were simply trained to the 140-character limit.</p>
-<p>Another important factor identified in this initial investigation of the data shows that the text files are fairly large. To improve processing time, only 10% of the entries for each file will be used which should allow faster processing time when building the model and running the Shiny application.</p>
+<p>An initial investigation of the data shows that on average, each text corpora has a relatively low number of words per line on. Blogs tend to have more words per line, followed by news and then twitter which has the least words per line. The lower number of words per line for the Twitter data is expected given that a tweet is limited to a certain number of characters. Even when Twitter doubled its character count from 140 to 280 characters in 2017, research shows that only 1% of tweets hit the 280-character limit, and only 12% of tweets are longer than 140 characters. Perhaps after so many years, users were simply trained to the 140-character limit.</p>
+<p>Another important observation in this initial investigation shows that the text files are fairly large. To improve processing time, a sample size of 15% will be obtained from all three data sets and then combined into a unified document corpus for subsequent analyses later in this report as part of preparing the data.</p>
 </div>
 <div id="histogram-of-words-per-line" class="section level3">
 <h3>Histogram of Words per Line</h3>
@@ -3048,17 +3048,17 @@ en_US.twitter.txt
 <blockquote>
 <p>The source code for the above plot is attached as <a href="#a.2-histogram-of-words-per-line">A.2 Histogram of Words per Line</a> in the Appendix section.</p>
 </blockquote>
-<p>The above histograms appear to confirm that the average number of words per line for all three text corpora is relatively low. This may support a general trend towards short and concise communications on digital platforms.</p>
+<p>The relatively low number of words in the three source files charted earlier in this section is also visible in the histogram plots shown above. This observation seems to support a general trend towards short and concise communications that may be useful later in the project.</p>
 </div>
 </div>
-<div id="clean-sample-data" class="section level2">
-<h2>Clean Sample Data</h2>
-<p>Prior to performing exploratory data analysis, the data should first be cleaned.</p>
-<p>Pending</p>
-</div>
-<div id="build-corpus" class="section level2">
-<h2>Build Corpus</h2>
-<p>Pending</p>
+<div id="prepare-the-data" class="section level2">
+<h2>Prepare the Data</h2>
+<p>Prior to performing exploratory data analysis, the three data sets will be sampled at 15%, cleaned and then combined into a single data set.</p>
+<p>Additional preprocessing will be performed to remove non-English characters, twitter handles and URLs</p>
+<p><em>unified document corpus</em></p>
+<blockquote>
+<p>The source code for preparing the data is attached as <a href="#a.3-sample-and-clean-the-data">A.3 Sample and Clean the Data</a> and <a href="#a.4-build-corpus">A.4 Build Corpus</a> in the Appendix section.</p>
+</blockquote>
 </div>
 <div id="exploratory-data-analysis" class="section level2">
 <h2>Exploratory Data Analysis</h2>
@@ -3073,7 +3073,10 @@ en_US.twitter.txt
 <div id="a.1-basic-data-summary" class="section level3">
 <h3>A.1 Basic Data Summary</h3>
 <p>Basic summary of the three text corpora.</p>
-<pre class="r"><code># file size
+<pre class="r"><code># assign sample size
+sampleSize = 0.15
+
+# file size
 fileSizeMB &lt;- round(file.info(c(blogsFileName,
                                 newsFileName,
                                 twitterFileName))$size / 1024 ^ 2)
@@ -3135,6 +3138,32 @@ plot3 &lt;- qplot(wpl[[3]],
 
 plotList = list(plot1, plot2, plot3)
 do.call(grid.arrange, c(plotList, list(ncol = 1)))</code></pre>
+</div>
+<div id="a.3-sample-and-clean-the-data" class="section level3">
+<h3>A.3 Sample and Clean the Data</h3>
+<pre class="r"><code># set seed for reproducability
+set.seed(660067)
+
+# sample all three data sets
+sampleBlogs &lt;- sample(blogs, length(blogs) * sampleSize, replace = FALSE)
+sampleNews &lt;- sample(news, length(news) * sampleSize, replace = FALSE)
+sampleTwitter &lt;- sample(twitter, length(twitter) * sampleSize, replace = FALSE)
+
+# remove all non-English characters from the sampled data
+blogs &lt;- iconv(blogs, &quot;latin1&quot;, &quot;ASCII&quot;, sub=&quot;&quot;)
+news &lt;- iconv(news, &quot;latin1&quot;, &quot;ASCII&quot;, sub=&quot;&quot;)
+twitter &lt;- iconv(twitter, &quot;latin1&quot;, &quot;ASCII&quot;, sub=&quot;&quot;)
+
+# combine all three data sets into a unified document corpus
+sampleData &lt;- c(blogs, news, twitter)
+
+# remove large variables no longer needed to free up memory
+rm(blogs, news, twitter)</code></pre>
+</div>
+<div id="a.4-build-corpus" class="section level3">
+<h3>A.4 Build Corpus</h3>
+<pre class="r"><code># pending
+# textCorpus &lt;- list()</code></pre>
 </div>
 </div>
 

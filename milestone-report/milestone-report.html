@@ -3045,21 +3045,22 @@ en_US.twitter.txt
 </div>
 <div id="prepare-the-data" class="section level2">
 <h2>Prepare the Data</h2>
-<p>Prior to performing exploratory data analysis, the three data sets will be sampled at 1% to improve performance. All non-English characters will be removed from the subset of data and then combined into a single data set. The new combined sample data set is written to disk which contains 42,695 lines and 1,020,235 words.</p>
-<p>The next step is to create a corpus from the sampled data set. A custom function named <code>buildCorpus</code> will be created and employed to perform the following transformation steps:</p>
+<p>Prior to performing exploratory data analysis, the three data sets will be sampled at 1% to improve performance. All non-English characters will be removed from the subset of data and then combined into a single data set. The combined sample data set will be written to disk which contains 42,695 lines and 1,020,235 words.</p>
+<p>The next step is to create a corpus from the sampled data set. A custom function named <code>buildCorpus</code> will be employed to perform the following transformation steps for each document:</p>
 <ol style="list-style-type: decimal">
-<li>Remove URLs, Twitter handles and emails by converting them to spaces</li>
+<li>Remove URL, Twitter handles and email patterns by converting them to spaces using a custom content transformer</li>
 <li>Convert all words to lowercase</li>
 <li>Remove common English stop words</li>
 <li>Remove punctuation marks</li>
 <li>Remove numbers</li>
 <li>Trim whitespace</li>
 <li>Remove profanity</li>
-<li>Convert the text to plaintext</li>
+<li>Convert to plain text documents</li>
 </ol>
+<p>The corpus will then be written to disk in two formats: a serialized R object in RDS format and as a text file. Finally, the first 10 documents (lines) from the corpus will be displayed.</p>
 <table class="table" style>
 <caption>
-First 10 Lines
+First 10 Documents
 </caption>
 <tbody>
 <tr>
@@ -3250,44 +3251,44 @@ if (!file.exists(badWordsFile)) {
 }
 
 buildCorpus &lt;- function (dataSet) {
-    corpus &lt;- VCorpus(VectorSource(dataSet))
+    docs &lt;- VCorpus(VectorSource(dataSet))
     toSpace &lt;- content_transformer(function(x, pattern) gsub(pattern, &quot; &quot;, x))
-    corpus &lt;- tm_map(corpus, toSpace, &quot;(f|ht)tp(s?)://(.*)[.][a-z]+&quot;)
-    corpus &lt;- tm_map(corpus, toSpace, &quot;@[^\\s]+&quot;)
-    corpus &lt;- tm_map(corpus, toSpace, &quot;\\b[A-Z a-z 0-9._ - ]*[@](.*?)[.]{1,3} \\b&quot;)
-    corpus &lt;- tm_map(corpus, tolower)
-    corpus &lt;- tm_map(corpus, removeWords, stopwords(&quot;english&quot;))
-    corpus &lt;- tm_map(corpus, removePunctuation)
-    corpus &lt;- tm_map(corpus, removeNumbers)
-    corpus &lt;- tm_map(corpus, stripWhitespace)
+    docs &lt;- tm_map(docs, toSpace, &quot;(f|ht)tp(s?)://(.*)[.][a-z]+&quot;)
+    docs &lt;- tm_map(docs, toSpace, &quot;@[^\\s]+&quot;)
+    docs &lt;- tm_map(docs, toSpace, &quot;\\b[A-Z a-z 0-9._ - ]*[@](.*?)[.]{1,3} \\b&quot;)
+    docs &lt;- tm_map(docs, tolower)
+    docs &lt;- tm_map(docs, removeWords, stopwords(&quot;english&quot;))
+    docs &lt;- tm_map(docs, removePunctuation)
+    docs &lt;- tm_map(docs, removeNumbers)
+    docs &lt;- tm_map(docs, stripWhitespace)
 
     # remove profane words from the sample data set
     con &lt;- file(badWordsFile, open = &quot;r&quot;)
     profanity &lt;- readLines(con, encoding = &quot;UTF-8&quot;, skipNul = TRUE)
     close(con)
     profanity &lt;- iconv(profanity, &quot;latin1&quot;, &quot;ASCII&quot;, sub = &quot;&quot;)
-    corpus &lt;- tm_map(corpus, removeWords, profanity)
-    corpus &lt;- tm_map(corpus, removeWords, c(&quot;fuckn&quot;,
-                                            &quot;fucken&quot;,
-                                            &quot;fuckkkk&quot;,
-                                            &quot;fuckd&quot;,
-                                            &quot;muhfuckas&quot;,
-                                            &quot;fuckinnn&quot;,
-                                            &quot;fuckingever&quot;,
-                                            &quot;muthafuckin&quot;,
-                                            &quot;fuckkkkkkkkkkk&quot;))
+    docs &lt;- tm_map(docs, removeWords, profanity)
+    docs &lt;- tm_map(docs, removeWords, c(&quot;fuckn&quot;,
+                                        &quot;fucken&quot;,
+                                        &quot;fuckkkk&quot;,
+                                        &quot;fuckd&quot;,
+                                        &quot;muhfuckas&quot;,
+                                        &quot;fuckinnn&quot;,
+                                        &quot;fuckingever&quot;,
+                                        &quot;muthafuckin&quot;,
+                                        &quot;fuckkkkkkkkkkk&quot;))
     
     # convert the text to plaintext
-    corpus &lt;- tm_map(corpus, PlainTextDocument)
-    return(corpus)
+    docs &lt;- tm_map(docs, PlainTextDocument)
+    return(docs)
 }
 
 # build the corpus and write to disk (RDS)
-corpusData &lt;- buildCorpus(sampleData)
-saveRDS(corpusData, file = &quot;data/final/en_US/en_US.corpus.rds&quot;)
+corpus &lt;- buildCorpus(sampleData)
+saveRDS(corpus, file = &quot;data/final/en_US/en_US.corpus.rds&quot;)
 
-# convert corpus to a dataframe and write words to disk (text)
-corpusText &lt;- data.frame(text = unlist(sapply(corpusData, '[', &quot;content&quot;)), stringsAsFactors = FALSE)
+# convert corpus to a dataframe and write lines/words to disk (text)
+corpusText &lt;- data.frame(text = unlist(sapply(corpus, '[', &quot;content&quot;)), stringsAsFactors = FALSE)
 con &lt;- file(&quot;data/final/en_US/en_US.corpus.txt&quot;, open = &quot;w&quot;)
 writeLines(corpusText$text, con)
 close(con)
@@ -3296,7 +3297,7 @@ kable(head(corpusText$text, 10),
       row.names = FALSE,
       col.names = NULL,
       align = c(&quot;l&quot;),
-      caption = &quot;First 10 Lines&quot;) %&gt;% kable_styling(position = &quot;left&quot;)
+      caption = &quot;First 10 Documents&quot;) %&gt;% kable_styling(position = &quot;left&quot;)
 
 # remove variables no longer needed to free up memory
 rm(sampleData)</code></pre>

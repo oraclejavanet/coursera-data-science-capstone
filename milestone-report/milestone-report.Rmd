@@ -150,7 +150,7 @@ library(stringi)
 library(kableExtra)
 
 # assign sample size
-sampleSize = 0.15
+sampleSize = 0.01
 
 # file size
 fileSizeMB <- round(file.info(c(blogsFileName,
@@ -277,60 +277,96 @@ rm(blogs, news, twitter, sampleBlogs, sampleNews, sampleTwitter)
 ```
 
 Prior to performing exploratory data analysis, the three data sets will be
-sampled at `r round(sampleSize*100)`% to improve performance. The subset of
-data will initially be cleaned by removing all non-English characters and then
-combined into a single data set. The new combined sample data set is written to
-disk and contains
+sampled at `r round(sampleSize*100)`% to improve performance. All non-English
+characters will be removed from the subset of data and then combined into a
+single data set. The new combined sample data set is written to disk which
+contains
 `r format(round(as.numeric(sampleDataLines)), big.mark = ",")` 
 lines and
 `r format(round(as.numeric(sampleDataWords)), big.mark = ",")` 
 words.
 
+The next step is to create a corpus from the sampled data set. A custom
+function named `buildCorpus` will be created and employed to perform the
+following transformation steps:
+
+1. Remove URLs, Twitter handles and emails by converting them to spaces
+1. Convert all words to lowercase
+1. Remove common English stop words
+1. Remove punctuation marks
+1. Remove numbers
+1. Trim whitespace
+1. Remove profanity
+1. Convert the text to plaintext
+
 ```{r prepare-the-data-build-corpus, message = FALSE, echo = FALSE}
 library(tm)
-library(SnowballC)
 
-buildCorpus <- function (x) {
-    corpus <- VCorpus(VectorSource(x))
+# download bad words file
+badWordsURL <- "https://www.freewebheaders.com/wordpress/wp-content/uploads/full-list-of-bad-words_text-file_2018_07_30.zip"
+badWordsFile <- "data/full-list-of-bad-words_text-file_2018_07_30.txt"
+if (!file.exists('data')) {
+    dir.create('data')
+}
+if (!file.exists(badWordsFile)) {
+    tempFile <- tempfile()
+    download.file(badWordsURL, tempFile)
+    unzip(tempFile, exdir = "data")
+    unlink(tempFile)
+}
+
+buildCorpus <- function (dataSet) {
+    corpus <- VCorpus(VectorSource(dataSet))
+    toSpace <- content_transformer(function(x, pattern) gsub(pattern, " ", x))
+    corpus <- tm_map(corpus, toSpace, "(f|ht)tp(s?)://(.*)[.][a-z]+")
+    corpus <- tm_map(corpus, toSpace, "@[^\\s]+")
+    corpus <- tm_map(corpus, toSpace, "\\b[A-Z a-z 0-9._ - ]*[@](.*?)[.]{1,3} \\b")
     corpus <- tm_map(corpus, tolower)
+    corpus <- tm_map(corpus, removeWords, stopwords("english"))
     corpus <- tm_map(corpus, removePunctuation)
     corpus <- tm_map(corpus, removeNumbers)
     corpus <- tm_map(corpus, stripWhitespace)
+
+    # remove profane words from the sample data set
+    con <- file(badWordsFile, open = "r")
+    profanity <- readLines(con, encoding = "UTF-8", skipNul = TRUE)
+    close(con)
+    profanity <- iconv(profanity, "latin1", "ASCII", sub = "")
+    corpus <- tm_map(corpus, removeWords, profanity)
+    corpus <- tm_map(corpus, removeWords, c("fuckn",
+                                            "fucken",
+                                            "fuckkkk",
+                                            "fuckd",
+                                            "muhfuckas",
+                                            "fuckinnn",
+                                            "fuckingever",
+                                            "muthafuckin",
+                                            "fuckkkkkkkkkkk"))
     
-    # read and process a file of banned words
-    #bw <- read.csv(file ='Terms-to-Block.csv', stringsAsFactors=F, skip=3)
-    #bannedWords <- gsub(",", "", tolower(bw[,2]))
-    #corpus <- tm_map(corpus, removeWords, bannedWords) # Eliminate banned words
-    #corpus <- tm_map(corpus, removeWords, stopwords("english")) # Eliminate English stop words
-    corpus <- tm_map(corpus, stemDocument)
+    # convert the text to plaintext
     corpus <- tm_map(corpus, PlainTextDocument)
     return(corpus)
 }
 
-# build the corpus and write to disk
+# build the corpus and write to disk (RDS)
 corpusData <- buildCorpus(sampleData)
 saveRDS(corpusData, file = "data/final/en_US/en_US.corpus.rds")
+
+# convert corpus to a dataframe and write words to disk (text)
+corpusText <- data.frame(text = unlist(sapply(corpusData, '[', "content")), stringsAsFactors = FALSE)
+con <- file("data/final/en_US/en_US.corpus.txt", open = "w")
+writeLines(corpusText$text, con)
+close(con)
+
+kable(head(corpusText$text, 10),
+      row.names = FALSE,
+      col.names = NULL,
+      align = c("l"),
+      caption = "First 10 Lines") %>% kable_styling(position = "left")
 
 # remove variables no longer needed to free up memory
 rm(sampleData)
 ```
-
-The final step in preparing the data will be to create a corpus from the sampled
-data set. The `tm` package will be employed to conduct further data cleaning and
-transformation methods.
-
-*library(tm) # Framework for text mining.*
-*library(SnowballC) # Provides wordStem() for stemming.*
-*library(RColorBrewer) # Generate palette of colours for plots.*
-*library(ggplot2) # Plot word frequencies.*
-
-
-A custom function named `buildCorpus` will be created to perform the following
-cleanup steps:
-
-1. Step 1
-1. Step 2
-1. Step 3
 
 > The source code for preparing the data is attached as [A.3 Sample and Clean the Data](#a.3-sample-and-clean-the-data) and [A.4 Build Corpus](#a.4-build-corpus) in the Appendix section.
 

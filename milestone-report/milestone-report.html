@@ -2850,7 +2850,7 @@ div.tocify {
 <h1 class="title toc-ignore">Coursera Capstone Project Milestone Report</h1>
 <h3 class="subtitle">Data Science Specialization from Johns Hopkins University</h3>
 <h4 class="author">Jeffrey M. Hunter</h4>
-<h4 class="date">27 June, 2019</h4>
+<h4 class="date">01 July, 2019</h4>
 
 </div>
 
@@ -2869,16 +2869,8 @@ div.tocify {
 </div>
 <div id="environment-setup" class="section level2">
 <h2>Environment Setup</h2>
-<p>Prepare the session by loading all necessary packages and clearing the global workspace (including hidden objects).</p>
+<p>Prepare the session by loading initial packages and clearing the global workspace (including hidden objects).</p>
 <pre class="r"><code>library(knitr)
-library(kableExtra)
-library(stringi)
-library(ggplot2)
-library(gridExtra)
-library(rJava)
-library(dplyr)
-library(tm)
-library(ngram)
 rm(list = ls(all.names = TRUE))
 setwd(&quot;~/repos/coursera/github-assignments/coursera-data-science-capstone/milestone-report&quot;)</code></pre>
 </div>
@@ -3053,9 +3045,15 @@ en_US.twitter.txt
 </div>
 <div id="prepare-the-data" class="section level2">
 <h2>Prepare the Data</h2>
-<p>Prior to performing exploratory data analysis, the three data sets will be sampled at 15%, cleaned and then combined into a single data set.</p>
-<p>Additional preprocessing will be performed to remove non-English characters, twitter handles and URLs</p>
-<p><em>unified document corpus</em></p>
+<p>Prior to performing exploratory data analysis, the three data sets will be sampled at 15% to improve performance. The subset of data will initially be cleaned by removing all non-English characters and then combined into a single data set. The new combined sample data set is written to disk and contains 640,451 lines and 15,349,566 words.</p>
+<p>The final step in preparing the data will be to create a corpus from the sampled data set. The <code>tm</code> package will be employed to conduct further data cleaning and transformation methods.</p>
+<p><em>library(tm) # Framework for text mining.</em> <em>library(SnowballC) # Provides wordStem() for stemming.</em> <em>library(RColorBrewer) # Generate palette of colours for plots.</em> <em>library(ggplot2) # Plot word frequencies.</em></p>
+<p>A custom function named <code>buildCorpus</code> will be created to perform the following cleanup steps:</p>
+<ol style="list-style-type: decimal">
+<li>Step 1</li>
+<li>Step 2</li>
+<li>Step 3</li>
+</ol>
 <blockquote>
 <p>The source code for preparing the data is attached as <a href="#a.3-sample-and-clean-the-data">A.3 Sample and Clean the Data</a> and <a href="#a.4-build-corpus">A.4 Build Corpus</a> in the Appendix section.</p>
 </blockquote>
@@ -3073,7 +3071,10 @@ en_US.twitter.txt
 <div id="a.1-basic-data-summary" class="section level3">
 <h3>A.1 Basic Data Summary</h3>
 <p>Basic summary of the three text corpora.</p>
-<pre class="r"><code># assign sample size
+<pre class="r"><code>library(stringi)
+library(kableExtra)
+
+# assign sample size
 sampleSize = 0.15
 
 # file size
@@ -3115,7 +3116,10 @@ kable(summary,
 <div id="a.2-histogram-of-words-per-line" class="section level3">
 <h3>A.2 Histogram of Words per Line</h3>
 <p>Histogram of words per line for the three text corpora.</p>
-<pre class="r"><code>plot1 &lt;- qplot(wpl[[1]],
+<pre class="r"><code>library(ggplot2)
+library(gridExtra)
+
+plot1 &lt;- qplot(wpl[[1]],
                geom = &quot;histogram&quot;,
                main = &quot;US Blogs&quot;,
                xlab = &quot;Words per Line&quot;,
@@ -3150,20 +3154,52 @@ sampleNews &lt;- sample(news, length(news) * sampleSize, replace = FALSE)
 sampleTwitter &lt;- sample(twitter, length(twitter) * sampleSize, replace = FALSE)
 
 # remove all non-English characters from the sampled data
-blogs &lt;- iconv(blogs, &quot;latin1&quot;, &quot;ASCII&quot;, sub=&quot;&quot;)
-news &lt;- iconv(news, &quot;latin1&quot;, &quot;ASCII&quot;, sub=&quot;&quot;)
-twitter &lt;- iconv(twitter, &quot;latin1&quot;, &quot;ASCII&quot;, sub=&quot;&quot;)
+sampleBlogs &lt;- iconv(sampleBlogs, &quot;latin1&quot;, &quot;ASCII&quot;, sub = &quot;&quot;)
+sampleNews &lt;- iconv(sampleNews, &quot;latin1&quot;, &quot;ASCII&quot;, sub = &quot;&quot;)
+sampleTwitter &lt;- iconv(sampleTwitter, &quot;latin1&quot;, &quot;ASCII&quot;, sub = &quot;&quot;)
 
-# combine all three data sets into a unified document corpus
-sampleData &lt;- c(blogs, news, twitter)
+# combine all three data sets into a single data set and write to disk
+sampleData &lt;- c(sampleBlogs, sampleNews, sampleTwitter)
+sampleDataFileName &lt;- &quot;data/final/en_US/en_US.sample.txt&quot;
+con &lt;- file(sampleDataFileName, open = &quot;w&quot;)
+writeLines(sampleData, con)
+close(con)
 
-# remove large variables no longer needed to free up memory
-rm(blogs, news, twitter)</code></pre>
+# get number of lines and words from the sample data set
+sampleDataLines &lt;- length(sampleData);
+sampleDataWords &lt;- sum(stri_count_words(sampleData))
+
+# remove variables no longer needed to free up memory
+rm(blogs, news, twitter, sampleBlogs, sampleNews, sampleTwitter)</code></pre>
 </div>
 <div id="a.4-build-corpus" class="section level3">
 <h3>A.4 Build Corpus</h3>
-<pre class="r"><code># pending
-# textCorpus &lt;- list()</code></pre>
+<pre class="r"><code>library(tm)
+library(SnowballC)
+
+buildCorpus &lt;- function (x) {
+    corpus &lt;- VCorpus(VectorSource(x))
+    corpus &lt;- tm_map(corpus, tolower)
+    corpus &lt;- tm_map(corpus, removePunctuation)
+    corpus &lt;- tm_map(corpus, removeNumbers)
+    corpus &lt;- tm_map(corpus, stripWhitespace)
+    
+    # read and process a file of banned words
+    #bw &lt;- read.csv(file ='Terms-to-Block.csv', stringsAsFactors=F, skip=3)
+    #bannedWords &lt;- gsub(&quot;,&quot;, &quot;&quot;, tolower(bw[,2]))
+    #corpus &lt;- tm_map(corpus, removeWords, bannedWords) # Eliminate banned words
+    #corpus &lt;- tm_map(corpus, removeWords, stopwords(&quot;english&quot;)) # Eliminate English stop words
+    corpus &lt;- tm_map(corpus, stemDocument)
+    corpus &lt;- tm_map(corpus, PlainTextDocument)
+    return(corpus)
+}
+
+# build the corpus and write to disk
+corpusData &lt;- buildCorpus(sampleData)
+saveRDS(corpusData, file = &quot;data/final/en_US/en_US.corpus.rds&quot;)
+
+# remove variables no longer needed to free up memory
+rm(sampleData)</code></pre>
 </div>
 </div>
 

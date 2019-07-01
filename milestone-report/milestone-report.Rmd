@@ -47,19 +47,11 @@ will only focus on the English corpora.
 
 ## Environment Setup
 
-Prepare the session by loading all necessary packages and clearing the global
+Prepare the session by loading initial packages and clearing the global
 workspace (including hidden objects).
 
 ```{r load-packages, message = FALSE, echo = TRUE}
 library(knitr)
-library(kableExtra)
-library(stringi)
-library(ggplot2)
-library(gridExtra)
-library(rJava)
-library(dplyr)
-library(tm)
-library(ngram)
 rm(list = ls(all.names = TRUE))
 setwd("~/repos/coursera/github-assignments/coursera-data-science-capstone/milestone-report")
 ```
@@ -148,11 +140,15 @@ rm(con)
 Prior to building the unified document corpus and cleaning the data, a basic
 summary of the three text corpora is being provided which includes file
 sizes, number of lines, number of characters, and number of words for each
-source file. Also included are basic statistics on the number of words per line (min, mean, and max).
+source file. Also included are basic statistics on the number of words per line
+(min, mean, and max).
 
 ### Initial Data Summary
 
 ```{r initial-data-summary-table, echo = FALSE, results = 'hold'}
+library(stringi)
+library(kableExtra)
+
 # assign sample size
 sampleSize = 0.15
 
@@ -214,6 +210,9 @@ report as part of preparing the data.
 ### Histogram of Words per Line
 
 ```{r initial-data-summary-plot, echo = FALSE, results = 'hold'}
+library(ggplot2)
+library(gridExtra)
+
 plot1 <- qplot(wpl[[1]],
                geom = "histogram",
                main = "US Blogs",
@@ -248,17 +247,6 @@ communications that may be useful later in the project.
 
 ## Prepare the Data
 
-Prior to performing exploratory data analysis, the three data sets will be
-sampled at `r round(sampleSize*100)`%, cleaned and then combined into a single
-data set.
-
-Additional preprocessing will be performed to remove non-English characters,
-twitter handles and URLs
-
-*unified document corpus*
-
-
-
 ```{r prepare-the-data-sample-and-clean, echo = FALSE}
 # set seed for reproducability
 set.seed(660067)
@@ -269,21 +257,80 @@ sampleNews <- sample(news, length(news) * sampleSize, replace = FALSE)
 sampleTwitter <- sample(twitter, length(twitter) * sampleSize, replace = FALSE)
 
 # remove all non-English characters from the sampled data
-blogs <- iconv(blogs, "latin1", "ASCII", sub="")
-news <- iconv(news, "latin1", "ASCII", sub="")
-twitter <- iconv(twitter, "latin1", "ASCII", sub="")
+sampleBlogs <- iconv(sampleBlogs, "latin1", "ASCII", sub = "")
+sampleNews <- iconv(sampleNews, "latin1", "ASCII", sub = "")
+sampleTwitter <- iconv(sampleTwitter, "latin1", "ASCII", sub = "")
 
-# combine all three data sets into a unified document corpus
-sampleData <- c(blogs, news, twitter)
+# combine all three data sets into a single data set and write to disk
+sampleData <- c(sampleBlogs, sampleNews, sampleTwitter)
+sampleDataFileName <- "data/final/en_US/en_US.sample.txt"
+con <- file(sampleDataFileName, open = "w")
+writeLines(sampleData, con)
+close(con)
 
-# remove large variables no longer needed to free up memory
-rm(blogs, news, twitter)
+# get number of lines and words from the sample data set
+sampleDataLines <- length(sampleData);
+sampleDataWords <- sum(stri_count_words(sampleData))
+
+# remove variables no longer needed to free up memory
+rm(blogs, news, twitter, sampleBlogs, sampleNews, sampleTwitter)
 ```
 
-```{r prepare-the-data-build-corpus, echo = FALSE}
-# pending
-# textCorpus <- list()
+Prior to performing exploratory data analysis, the three data sets will be
+sampled at `r round(sampleSize*100)`% to improve performance. The subset of
+data will initially be cleaned by removing all non-English characters and then
+combined into a single data set. The new combined sample data set is written to
+disk and contains
+`r format(round(as.numeric(sampleDataLines)), big.mark = ",")` 
+lines and
+`r format(round(as.numeric(sampleDataWords)), big.mark = ",")` 
+words.
+
+```{r prepare-the-data-build-corpus, message = FALSE, echo = FALSE}
+library(tm)
+library(SnowballC)
+
+buildCorpus <- function (x) {
+    corpus <- VCorpus(VectorSource(x))
+    corpus <- tm_map(corpus, tolower)
+    corpus <- tm_map(corpus, removePunctuation)
+    corpus <- tm_map(corpus, removeNumbers)
+    corpus <- tm_map(corpus, stripWhitespace)
+    
+    # read and process a file of banned words
+    #bw <- read.csv(file ='Terms-to-Block.csv', stringsAsFactors=F, skip=3)
+    #bannedWords <- gsub(",", "", tolower(bw[,2]))
+    #corpus <- tm_map(corpus, removeWords, bannedWords) # Eliminate banned words
+    #corpus <- tm_map(corpus, removeWords, stopwords("english")) # Eliminate English stop words
+    corpus <- tm_map(corpus, stemDocument)
+    corpus <- tm_map(corpus, PlainTextDocument)
+    return(corpus)
+}
+
+# build the corpus and write to disk
+corpusData <- buildCorpus(sampleData)
+saveRDS(corpusData, file = "data/final/en_US/en_US.corpus.rds")
+
+# remove variables no longer needed to free up memory
+rm(sampleData)
 ```
+
+The final step in preparing the data will be to create a corpus from the sampled
+data set. The `tm` package will be employed to conduct further data cleaning and
+transformation methods.
+
+*library(tm) # Framework for text mining.*
+*library(SnowballC) # Provides wordStem() for stemming.*
+*library(RColorBrewer) # Generate palette of colours for plots.*
+*library(ggplot2) # Plot word frequencies.*
+
+
+A custom function named `buildCorpus` will be created to perform the following
+cleanup steps:
+
+1. Step 1
+1. Step 2
+1. Step 3
 
 > The source code for preparing the data is attached as [A.3 Sample and Clean the Data](#a.3-sample-and-clean-the-data) and [A.4 Build Corpus](#a.4-build-corpus) in the Appendix section.
 

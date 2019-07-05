@@ -36,7 +36,7 @@ exploratory data analysis, this report describes the major features of the
 training data and then summarizes my plans for creating the predictive model.
 
 The model will be trained using a unified document corpus compiled from the
-following three sources:
+following three sources of text data:
 
 1. Blogs
 1. News
@@ -236,6 +236,9 @@ plot3 <- qplot(wpl[[3]],
 
 plotList = list(plot1, plot2, plot3)
 do.call(grid.arrange, c(plotList, list(ncol = 1)))
+
+# free up some memory
+rm(plot1, plot2, plot3)
 ```
 
 > The source code for the above plot is attached as [A.2 Histogram of Words per Line](#a.2-histogram-of-words-per-line) in the Appendix section.
@@ -327,6 +330,10 @@ buildCorpus <- function (dataSet) {
     docs <- tm_map(docs, toSpace, "\\b[A-Z a-z 0-9._ - ]*[@](.*?)[.]{1,3} \\b")
     docs <- tm_map(docs, tolower)
     docs <- tm_map(docs, removeWords, stopwords("english"))
+    docs <- tm_map(docs, removeWords, c("are", "more", "has", "the", "will",
+                                        "with", "The", "also", "that", "and",
+                                        "for", "in", "is", "it", "not", "to",
+                                        "our", "this"))
     docs <- tm_map(docs, removePunctuation)
     docs <- tm_map(docs, removeNumbers)
     docs <- tm_map(docs, stripWhitespace)
@@ -376,6 +383,115 @@ rm(sampleData)
 
 ## Exploratory Data Analysis
 
+Exploratory data analysis will be performed to fulfill the primary goal for
+this report. Several techniques will be employed to develop an understanding of
+the training data including the construction of a wordcloud, tokenizing and
+n-gram generation.
+
+### Word Cloud
+
+This step will be used to prepare data to construct a histogram of the total
+number of counts of unique words and to construct a wordcloud. The frequency of
+each word in each of the three datasets is calculated.This is done using the TM
+package to build the document term matrix and the transpose of the document term
+matrix.
+
+```{r exploratory-data-analysis-word-cloud, message = FALSE, echo = FALSE}
+library(wordcloud)
+library(RColorBrewer)
+
+# create document term matrix 
+#dtm <- DocumentTermMatrix(corpus)
+#dtm
+
+# create transpose of the document term matrix 
+#tdm <- TermDocumentMatrix(corpus)
+#tdm
+
+## The histogram showing the frequency of occurence of uniques words is constructed uing the following code.
+
+# frequency
+#freq <- sort(colSums(as.matrix(dtm)), decreasing = TRUE)
+#wf <- data.frame(word = names(freq), freq = freq)
+
+# Plot Histogram
+#subset(wf, freq > 1000) %>%
+#  ggplot(aes(word, freq)) +
+#  geom_bar(stat = "identity", fill = "darkred", colour = "darkgreen") +
+#  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# word cloud
+#wordcloud(names(freq), freq, min.freq = 700, colors = brewer.pal(6, "Dark2"))
+
+#rm(dtm)
+#rm(tdm)
+#rm(freq)
+#rm(wf)
+#sampleClean <- get("content", corpus)
+#suppressWarnings(wordcloud(sampleClean, max.words = 500, random.order = FALSE, colors = #brewer.pal(9, "RdYlGn")))
+#head(sampleClean)
+
+### http://www.sthda.com/english/wiki/text-mining-and-word-cloud-fundamentals-in-r-5-simple-steps-you-should-know
+
+dtm <- TermDocumentMatrix(corpus)
+dtm
+
+m <- as.matrix(dtm)
+v <- sort(rowSums(m), decreasing = TRUE)
+d <- data.frame(word = names(v), freq = v)
+head(d, 10)
+
+suppressWarnings (
+  wordcloud(words = d$word,
+            freq = d$freq,
+            min.freq = 1,
+            max.words = 200,
+            random.order = FALSE,
+            rot.per = 0.35, 
+            colors=brewer.pal(8, "Dark2"))
+)
+
+## Arguments of the word cloud generator function :
+# words : the words to be plotted
+# freq : their frequencies
+# min.freq : words with frequency below min.freq will not be plotted
+# max.words : maximum number of words to be plotted
+# random.order : plot words in random order. If false, they will be plotted in decreasing frequency
+# rot.per : proportion words with 90 degree rotation (vertical text)
+# colors : color words from least to most frequent. Use, for example, colors =“black” for single color.
+
+
+## You can have a look at the frequent terms in the term-document matrix as
+# follow. In the example below we want to find words that occur at least 1000
+# times :
+
+findFreqTerms(dtm, lowfreq = 1000)
+
+# The frequency table of words
+head(d, 10)
+
+# The frequency of the first 10 frequent words are plotted :
+barplot(d[1:10,]$freq,
+        las = 2,
+        names.arg = d[1:10,]$word,
+        col ="lightblue",
+        main ="10 Most Frequent Words",
+        ylab = "Word Frequencies")
+
+
+g <- ggplot (d[1:10,], aes(x = reorder(d[1:10,]$word,- d[1:10,]$fre), y = d[1:10,]$fre ))
+g <- g + geom_bar( stat = "Identity" , fill = "lightBlue" )
+g <- g + geom_text( aes (label = d[1:10,]$fre ) , vjust = - 0.20, size = 3 )
+g <- g + ylab( "Word Frequencies" )
+g <- g + theme ( axis.text.x = element_text ( angle = 45 , hjust = 1 ) )
+print(g)
+
+
+```
+
+### Tokenizing and N-Gram Generation
+
+
 Pending
 
 ## Way Forward
@@ -406,4 +522,9 @@ Histogram of words per line for the three text corpora.
 ### A.4 Build Corpus
 
 ```{r prepare-the-data-build-corpus-appendix, ref.label = 'prepare-the-data-build-corpus', echo = TRUE, eval = FALSE}
+```
+
+### A.5 Word Cloud
+
+```{r exploratory-data-analysis-word-cloud-appendix, ref.label = 'exploratory-data-analysis-word-cloud', echo = TRUE, eval = FALSE}
 ```

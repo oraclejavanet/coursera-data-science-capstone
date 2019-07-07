@@ -2,7 +2,7 @@
 
 **Jeffrey M. Hunter**
 
-July 6, 2019
+July 7, 2019
 
 ## Introduction
 
@@ -41,10 +41,13 @@ that provides a user interface that can be accessed by users.
 This repository contains the `ui.R` and `server.R` source code files for the
 developed Shiny application as well as the RStudio Presenter files.
 
+The Shiny application is hosted on shinyapps.io and the Presentation (slides)
+if available on RPubs.
+
 ##### Links
 
 * Source code files available on GitHub: <a href="https://github.com/oraclejavanet/coursera-data-science-capstone/">https://github.com/oraclejavanet/coursera-data-science-capstone/</a>
 
-* Shiny application available on shinyapps.io: <a href="https://jhunter.shinyapps.io/coursera-data-science-capstone/">https://jhunter.shinyapps.io/coursera-data-science-capstone/</a>
+* Final project submission (Presentation): <a href="http://rpubs.com/OracleJavaNet/coursera-data-science-capstone">http://rpubs.com/OracleJavaNet/coursera-data-science-capstone/</a>
 
-* Presentation available on RPubs: <a href="http://rpubs.com/OracleJavaNet/coursera-data-science-capstone">http://rpubs.com/OracleJavaNet/coursera-data-science-capstone</a>
+* Final project submission (Shiny App): <a href="https://jhunter.shinyapps.io/coursera-data-science-capstone/">https://jhunter.shinyapps.io/coursera-data-science-capstone/</a>

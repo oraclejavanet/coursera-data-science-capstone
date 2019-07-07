@@ -241,12 +241,12 @@ do.call(grid.arrange, c(plotList, list(ncol = 1)))
 rm(plot1, plot2, plot3)
 ```
 
-> The source code for the above plot is attached as [A.2 Histogram of Words per Line](#a.2-histogram-of-words-per-line) in the Appendix section.
-
 The relatively low number of words in the three source files charted earlier
 in this section is also visible in the histogram plots shown above. This
 observation seems to support a general trend towards short and concise
 communications that may be useful later in the project.
+
+> The source code for the above plot is attached as [A.2 Histogram of Words per Line](#a.2-histogram-of-words-per-line) in the Appendix section.
 
 ## Prepare the Data
 
@@ -325,36 +325,24 @@ if (!file.exists(badWordsFile)) {
 buildCorpus <- function (dataSet) {
     docs <- VCorpus(VectorSource(dataSet))
     toSpace <- content_transformer(function(x, pattern) gsub(pattern, " ", x))
+    
+    # remove URL, Twitter handles and email patterns
     docs <- tm_map(docs, toSpace, "(f|ht)tp(s?)://(.*)[.][a-z]+")
     docs <- tm_map(docs, toSpace, "@[^\\s]+")
     docs <- tm_map(docs, toSpace, "\\b[A-Z a-z 0-9._ - ]*[@](.*?)[.]{1,3} \\b")
-    docs <- tm_map(docs, tolower)
-    docs <- tm_map(docs, removeWords, stopwords("english"))
-    docs <- tm_map(docs, removeWords, c("are", "more", "has", "the", "will",
-                                        "with", "The", "also", "that", "and",
-                                        "for", "in", "is", "it", "not", "to",
-                                        "our", "this"))
-    docs <- tm_map(docs, removePunctuation)
-    docs <- tm_map(docs, removeNumbers)
-    docs <- tm_map(docs, stripWhitespace)
-
+    
     # remove profane words from the sample data set
     con <- file(badWordsFile, open = "r")
     profanity <- readLines(con, encoding = "UTF-8", skipNul = TRUE)
     close(con)
     profanity <- iconv(profanity, "latin1", "ASCII", sub = "")
     docs <- tm_map(docs, removeWords, profanity)
-    docs <- tm_map(docs, removeWords, c("fuckn",
-                                        "fucken",
-                                        "fuckkkk",
-                                        "fuckd",
-                                        "muhfuckas",
-                                        "fuckinnn",
-                                        "fuckingever",
-                                        "muthafuckin",
-                                        "fuckkkkkkkkkkk"))
     
-    # convert the text to plaintext
+    docs <- tm_map(docs, tolower)
+    docs <- tm_map(docs, removeWords, stopwords("english"))
+    docs <- tm_map(docs, removePunctuation)
+    docs <- tm_map(docs, removeNumbers)
+    docs <- tm_map(docs, stripWhitespace)
     docs <- tm_map(docs, PlainTextDocument)
     return(docs)
 }
@@ -385,118 +373,160 @@ rm(sampleData)
 
 Exploratory data analysis will be performed to fulfill the primary goal for
 this report. Several techniques will be employed to develop an understanding of
-the training data including the construction of a wordcloud, tokenizing and
-n-gram generation.
+the training data which include looking at the most frequently used words,
+tokenizing and n-gram generation.
 
-### Word Cloud
+### Word Frequencies
 
-This step will be used to prepare data to construct a histogram of the total
-number of counts of unique words and to construct a wordcloud. The frequency of
-each word in each of the three datasets is calculated.This is done using the TM
-package to build the document term matrix and the transpose of the document term
-matrix.
+A bar chart and word cloud will be constructed to illustrate unique word
+frequencies.
 
-```{r exploratory-data-analysis-word-cloud, message = FALSE, echo = FALSE}
+```{r exploratory-data-analysis-word-frequencies, message = FALSE, echo = FALSE}
 library(wordcloud)
 library(RColorBrewer)
 
-# create document term matrix 
-#dtm <- DocumentTermMatrix(corpus)
-#dtm
+tdm <- TermDocumentMatrix(corpus)
+freq <- sort(rowSums(as.matrix(tdm)), decreasing = TRUE)
+wordFreq <- data.frame(word = names(freq), freq = freq)
 
-# create transpose of the document term matrix 
-#tdm <- TermDocumentMatrix(corpus)
-#tdm
-
-## The histogram showing the frequency of occurence of uniques words is constructed uing the following code.
-
-# frequency
-#freq <- sort(colSums(as.matrix(dtm)), decreasing = TRUE)
-#wf <- data.frame(word = names(freq), freq = freq)
-
-# Plot Histogram
-#subset(wf, freq > 1000) %>%
-#  ggplot(aes(word, freq)) +
-#  geom_bar(stat = "identity", fill = "darkred", colour = "darkgreen") +
-#  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-# word cloud
-#wordcloud(names(freq), freq, min.freq = 700, colors = brewer.pal(6, "Dark2"))
-
-#rm(dtm)
-#rm(tdm)
-#rm(freq)
-#rm(wf)
-#sampleClean <- get("content", corpus)
-#suppressWarnings(wordcloud(sampleClean, max.words = 500, random.order = FALSE, colors = #brewer.pal(9, "RdYlGn")))
-#head(sampleClean)
-
-### http://www.sthda.com/english/wiki/text-mining-and-word-cloud-fundamentals-in-r-5-simple-steps-you-should-know
-
-dtm <- TermDocumentMatrix(corpus)
-dtm
-
-m <- as.matrix(dtm)
-v <- sort(rowSums(m), decreasing = TRUE)
-d <- data.frame(word = names(v), freq = v)
-head(d, 10)
-
-suppressWarnings (
-  wordcloud(words = d$word,
-            freq = d$freq,
-            min.freq = 1,
-            max.words = 200,
-            random.order = FALSE,
-            rot.per = 0.35, 
-            colors=brewer.pal(8, "Dark2"))
-)
-
-## Arguments of the word cloud generator function :
-# words : the words to be plotted
-# freq : their frequencies
-# min.freq : words with frequency below min.freq will not be plotted
-# max.words : maximum number of words to be plotted
-# random.order : plot words in random order. If false, they will be plotted in decreasing frequency
-# rot.per : proportion words with 90 degree rotation (vertical text)
-# colors : color words from least to most frequent. Use, for example, colors =“black” for single color.
-
-
-## You can have a look at the frequent terms in the term-document matrix as
-# follow. In the example below we want to find words that occur at least 1000
-# times :
-
-findFreqTerms(dtm, lowfreq = 1000)
-
-# The frequency table of words
-head(d, 10)
-
-# The frequency of the first 10 frequent words are plotted :
-barplot(d[1:10,]$freq,
-        las = 2,
-        names.arg = d[1:10,]$word,
-        col ="lightblue",
-        main ="10 Most Frequent Words",
-        ylab = "Word Frequencies")
-
-
-g <- ggplot (d[1:10,], aes(x = reorder(d[1:10,]$word,- d[1:10,]$fre), y = d[1:10,]$fre ))
-g <- g + geom_bar( stat = "Identity" , fill = "lightBlue" )
-g <- g + geom_text( aes (label = d[1:10,]$fre ) , vjust = - 0.20, size = 3 )
-g <- g + ylab( "Word Frequencies" )
-g <- g + theme ( axis.text.x = element_text ( angle = 45 , hjust = 1 ) )
+# plot the top 10 most frequent words
+g <- ggplot (wordFreq[1:10,], aes(x = reorder(wordFreq[1:10,]$word, -wordFreq[1:10,]$fre),
+                                  y = wordFreq[1:10,]$fre ))
+g <- g + geom_bar( stat = "Identity" , fill = I("grey50"))
+g <- g + geom_text(aes(label = wordFreq[1:10,]$fre), vjust = -0.20, size = 3)
+g <- g + xlab("")
+g <- g + ylab("Word Frequencies")
+g <- g + theme(plot.title = element_text(size = 14, hjust = 0.5, vjust = 0.5),
+               axis.text.x = element_text(hjust = 0.5, vjust = 0.5, angle = 45),
+               axis.text.y = element_text(hjust = 0.5, vjust = 0.5))
+g <- g + ggtitle("10 Most Frequent Words")
 print(g)
 
+# construct word cloud
+suppressWarnings (
+    wordcloud(words = wordFreq$word,
+              freq = wordFreq$freq,
+              min.freq = 1,
+              max.words = 100,
+              random.order = FALSE,
+              rot.per = 0.35, 
+              colors=brewer.pal(8, "Dark2"))
+)
 
+# remove variables no longer needed to free up memory
+rm(tdm, freq, wordFreq, g)
 ```
+
+> The source code for the word frequency bar chart and constructing the work cloud is attached as [A.5 Word Frequencies](#a.5-word-frequencies) in the Appendix section.
 
 ### Tokenizing and N-Gram Generation
 
+The predictive model I plan to develop for the Shiny application will handle 
+uniqrams, bigrams, and trigrams. In this section, I will use the `RWeka` package
+to construct functions that tokenize the sample data and construct matrices of
+uniqrams, bigrams, and trigrams.
 
-Pending
+```{r exploratory-data-analysis-tokenize, message = FALSE, echo = FALSE}
+library(RWeka)
+
+unigramTokenizer <- function(x) NGramTokenizer(x, Weka_control(min = 1, max = 1))
+bigramTokenizer <- function(x) NGramTokenizer(x, Weka_control(min = 2, max = 2))
+trigramTokenizer <- function(x) NGramTokenizer(x, Weka_control(min = 3, max = 3))
+```
+
+#### Unigrams
+
+```{r exploratory-data-analysis-tokenize-unigrams, message = FALSE, echo = FALSE}
+# create term document matrix for the corpus
+unigramMatrix <- TermDocumentMatrix(corpus, control = list(tokenize = unigramTokenizer))
+
+# eliminate sparse terms for each n-gram and get frequencies of most common n-grams
+unigramMatrixFreq <- sort(rowSums(as.matrix(removeSparseTerms(unigramMatrix, 0.99))), decreasing = TRUE)
+unigramMatrixFreq <- data.frame(word = names(unigramMatrixFreq), freq = unigramMatrixFreq)
+
+# generate plot
+g <- ggplot(unigramMatrixFreq[1:20,], aes(x = reorder(word, -freq), y = freq))
+g <- g + geom_bar(stat = "identity", fill = I("grey50"))
+g <- g + geom_text(aes(label = freq ), vjust = -0.20, size = 3)
+g <- g + xlab("")
+g <- g + ylab("Frequency")
+g <- g + theme(plot.title = element_text(size = 14, hjust = 0.5, vjust = 0.5),
+               axis.text.x = element_text(hjust = 1.0, angle = 45),
+               axis.text.y = element_text(hjust = 0.5, vjust = 0.5))
+g <- g + ggtitle("20 Most Common Unigrams")
+print(g)
+```
+
+#### Bigrams
+
+```{r exploratory-data-analysis-tokenize-bigrams, message = FALSE, echo = FALSE}
+# create term document matrix for the corpus
+bigramMatrix <- TermDocumentMatrix(corpus, control = list(tokenize = bigramTokenizer))
+
+# eliminate sparse terms for each n-gram and get frequencies of most common n-grams
+bigramMatrixFreq <- sort(rowSums(as.matrix(removeSparseTerms(bigramMatrix, 0.999))), decreasing = TRUE)
+bigramMatrixFreq <- data.frame(word = names(bigramMatrixFreq), freq = bigramMatrixFreq)
+
+# generate plot
+g <- ggplot(bigramMatrixFreq[1:20,], aes(x = reorder(word, -freq), y = freq))
+g <- g + geom_bar(stat = "identity", fill = I("grey50"))
+g <- g + geom_text(aes(label = freq ), vjust = -0.20, size = 3)
+g <- g + xlab("")
+g <- g + ylab("Frequency")
+g <- g + theme(plot.title = element_text(size = 14, hjust = 0.5, vjust = 0.5),
+               axis.text.x = element_text(hjust = 1.0, angle = 45),
+               axis.text.y = element_text(hjust = 0.5, vjust = 0.5))
+g <- g + ggtitle("20 Most Common Bigrams")
+print(g)
+```
+
+#### Trigrams
+
+```{r exploratory-data-analysis-tokenize-trigrams, message = FALSE, echo = FALSE}
+# create term document matrix for the corpus
+trigramMatrix <- TermDocumentMatrix(corpus, control = list(tokenize = trigramTokenizer))
+
+# eliminate sparse terms for each n-gram and get frequencies of most common n-grams
+trigramMatrixFreq <- sort(rowSums(as.matrix(removeSparseTerms(trigramMatrix, 0.9999))), decreasing = TRUE)
+trigramMatrixFreq <- data.frame(word = names(trigramMatrixFreq), freq = trigramMatrixFreq)
+
+# generate plot
+g <- ggplot(trigramMatrixFreq[1:20,], aes(x = reorder(word, -freq), y = freq))
+g <- g + geom_bar(stat = "identity", fill = I("grey50"))
+g <- g + geom_text(aes(label = freq ), vjust = -0.20, size = 3)
+g <- g + xlab("")
+g <- g + ylab("Frequency")
+g <- g + theme(plot.title = element_text(size = 14, hjust = 0.5, vjust = 0.5),
+               axis.text.x = element_text(hjust = 1.0, angle = 45),
+               axis.text.y = element_text(hjust = 0.5, vjust = 0.5))
+g <- g + ggtitle("20 Most Common Trigrams")
+print(g)
+```
+
+> The source code for this section is attached as [A.6 Tokenizing and N-Gram Generation](#a.6-tokenizing-and-n-gram-generation) in the Appendix section.
 
 ## Way Forward
 
-Pending
+The final deliverable in the capstone project is to build a predictive algorithm
+that will be deployed as a Shiny app for the user interface. The Shiny app
+should take as input a phrase (multiple words) in a text box input and output a
+prediction of the next word.
+
+The predictive algorithm will be developed using an n-gram model with a
+word frequency lookup similar to that performed in the exploratory data analysis
+section of this report. A strategy will be built based on the knowledge 
+gathered during the exploratory analysis. For example, as n increased for
+each n-gram, the frequency decreased for each of its terms. So one possible
+strategy may be to construct the model to first look for the unigram that would
+follow from the entered text. Once a full term is entered followed by a space,
+find the most common bigram model and so on.
+
+Another possible strategy may be to predict the next word using the trigram
+model. If no matching trigram can be found, then the algorithm would check the
+bigram model. If still not found, use the unigram model.
+
+The final strategy will be based on the one that increases efficiency and
+provides the best accuracy.
 
 ## Appendix
 
@@ -524,7 +554,30 @@ Histogram of words per line for the three text corpora.
 ```{r prepare-the-data-build-corpus-appendix, ref.label = 'prepare-the-data-build-corpus', echo = TRUE, eval = FALSE}
 ```
 
-### A.5 Word Cloud
+### A.5 Word Frequencies
 
-```{r exploratory-data-analysis-word-cloud-appendix, ref.label = 'exploratory-data-analysis-word-cloud', echo = TRUE, eval = FALSE}
+```{r exploratory-data-analysis-word-frequencies-appendix, ref.label = 'exploratory-data-analysis-word-frequencies', echo = TRUE, eval = FALSE}
 ```
+
+### A.6 Tokenizing and N-Gram Generation
+
+**Tokenize Functions**
+
+```{r exploratory-data-analysis-tokenize-appendix, ref.label = 'exploratory-data-analysis-tokenize', echo = TRUE, eval = FALSE}
+```
+
+**Unigrams**
+
+```{r exploratory-data-analysis-tokenize-unigrams-appendix, ref.label = 'exploratory-data-analysis-tokenize-unigrams', echo = TRUE, eval = FALSE}
+```
+
+**Bigrams**
+
+```{r exploratory-data-analysis-tokenize-bigrams-appendix, ref.label = 'exploratory-data-analysis-tokenize-bigrams', echo = TRUE, eval = FALSE}
+```
+
+**Trigrams**
+
+```{r exploratory-data-analysis-tokenize-trigrams-appendix, ref.label = 'exploratory-data-analysis-tokenize-trigrams', echo = TRUE, eval = FALSE}
+```
+

@@ -192,7 +192,7 @@ kable(summary,
 > The source code for the above table is attached as [A.1 Basic Data Summary](#a.1-basic-data-summary) in the Appendix section.
 
 An initial investigation of the data shows that on average, each text corpora
-has a relatively low number of words per line on. Blogs tend to have more words
+has a relatively low number of words per line. Blogs tend to have more words
 per line, followed by news and then twitter which has the least words per line.
 The lower number of words per line for the Twitter data is expected given that a
 tweet is limited to a certain number of characters. Even when Twitter doubled

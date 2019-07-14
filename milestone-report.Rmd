@@ -53,7 +53,7 @@ workspace (including hidden objects).
 ```{r load-packages, message = FALSE, echo = TRUE}
 library(knitr)
 rm(list = ls(all.names = TRUE))
-setwd("~/repos/coursera/github-assignments/coursera-data-science-capstone/milestone-report")
+setwd("~/repos/coursera/github-assignments/coursera-data-science-capstone")
 ```
 
 ```{r setup, include = FALSE}

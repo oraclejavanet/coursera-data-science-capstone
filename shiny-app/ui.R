@@ -46,13 +46,15 @@ shinyUI(
                             automobiles (1973-74 models) based on 11 aspects of
                             automobile design and performance. See ",
                             em("About the Data Set"),
-                            br(),br(),
+                            br(),
+                            br(),
                             "The source code for this application can be found
                             on GitHub:",
                             br(),
                             br(),
-                            a(href = "https://github.com/oraclejavanet/developing-data-products-course-project-3/tree/master/shiny-app/",
-                            "https://github.com/oraclejavanet/developing-data-products-course-project-3/tree/master/shiny-app/")),
+                            img(src = "github.png"),
+                            a(href = "https://github.com/oraclejavanet/coursera-data-science-capstone/tree/master/shiny-app/",
+                            "Next Word Predict")),
                         h3("About Me"),
                         div("My name is Jeffrey M. Hunter and I am a
                             Senior Database Administrator and Application

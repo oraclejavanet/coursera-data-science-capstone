@@ -1,6 +1,6 @@
 # server.R
 # Author: Jeffrey M. Hunter
-# Date: 24-JUL-2019
+# Date: 25-JUL-2019
 # Description: Shiny Server, Coursera Data Science Capstone Final Project
 # GitHub: https://github.com/oraclejavanet/coursera-data-science-capstone
 
@@ -32,7 +32,7 @@ predictionMatch <- function(userInput, ngrams) {
         if (nrow(dataTokens) >= 1) {
             return(dataTokens$outcome[1:3])
         }
-        # backoff
+        # backoff to bigram
         return(predictionMatch(userInput, ngrams - 1))
     }
 

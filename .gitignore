@@ -23,6 +23,10 @@
 
 # RStudio Project
 data/
+
+# Include n-gram frequencies
+!shiny-app/data
+
 supplements/
 packrat/lib*/
 .Rproj.user

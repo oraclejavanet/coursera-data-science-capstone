@@ -46,8 +46,9 @@ if available on RPubs.
 
 ##### Links
 
-* Source code files available on GitHub: <a href="https://github.com/oraclejavanet/coursera-data-science-capstone/">https://github.com/oraclejavanet/coursera-data-science-capstone/</a>
+* Final project submission (Shiny App): <a href="https://jhunter.shinyapps.io/coursera-data-science-capstone/">https://jhunter.shinyapps.io/coursera-data-science-capstone/</a>
 
 * Final project submission (Presentation): <a href="http://rpubs.com/OracleJavaNet/coursera-data-science-capstone">http://rpubs.com/OracleJavaNet/coursera-data-science-capstone/</a>
 
-* Final project submission (Shiny App): <a href="https://jhunter.shinyapps.io/coursera-data-science-capstone/">https://jhunter.shinyapps.io/coursera-data-science-capstone/</a>
+* Source code files available on GitHub: <a href="https://github.com/oraclejavanet/coursera-data-science-capstone/">https://github.com/oraclejavanet/coursera-data-science-capstone/</a>
+

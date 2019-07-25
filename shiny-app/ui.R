@@ -1,6 +1,6 @@
 # ui.R
 # Author: Jeffrey M. Hunter
-# Date: 24-JUL-2019
+# Date: 25-JUL-2019
 # Description: Shiny UI, Coursera Data Science Capstone Final Project
 # GitHub: https://github.com/oraclejavanet/coursera-data-science-capstone
 
@@ -40,12 +40,22 @@ shinyUI(
                ),
                tabPanel("About",
                         h3("About Next Word Predict"),
-                        div("Motor Trend Data Analysis is an interactive
-                            application that uses linear regression modeling
-                            techniques to estimate fuel consumption (MPG) in 32
-                            automobiles (1973-74 models) based on 11 aspects of
-                            automobile design and performance. See ",
-                            em("About the Data Set"),
+                        br(),
+                        div("Next Word Predict is a Shiny app that uses a text
+                            prediction algorithm to predict the next word(s)
+                            based on text entered by a user.",
+                            br(),
+                            br(),
+                            "The predicted next word will be shown when the app
+                            detects that you have finished typing one or more
+                            words. When entering text, please allow a few
+                            seconds for the output to appear.",
+                            br(),
+                            br(),
+                            "Use the slider tool to select up to three next
+                            word predictions. The top prediction will be
+                            shown first followed by the second and third likely
+                            next words.",
                             br(),
                             br(),
                             "The source code for this application can be found
@@ -55,7 +65,9 @@ shinyUI(
                             img(src = "github.png"),
                             a(href = "https://github.com/oraclejavanet/coursera-data-science-capstone/tree/master/shiny-app/",
                             "Next Word Predict")),
+                        br(),
                         h3("About Me"),
+                        br(),
                         div("My name is Jeffrey M. Hunter and I am a
                             Senior Database Administrator and Application
                             Programmer for ",

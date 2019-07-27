@@ -1,6 +1,6 @@
 # ui.R
 # Author: Jeffrey M. Hunter
-# Date: 25-JUL-2019
+# Date: 27-JUL-2019
 # Description: Shiny UI, Coursera Data Science Capstone Final Project
 # GitHub: https://github.com/oraclejavanet/coursera-data-science-capstone
 
@@ -63,7 +63,7 @@ shinyUI(
                             br(),
                             br(),
                             img(src = "github.png"),
-                            a(href = "https://github.com/oraclejavanet/coursera-data-science-capstone/tree/master/shiny-app/",
+                            a(target = "_blank", href = "https://github.com/oraclejavanet/coursera-data-science-capstone/tree/master/shiny-app/",
                             "Next Word Predict")),
                         br(),
                         h3("About Me"),
@@ -91,10 +91,10 @@ shinyUI(
                             br(),
                             br(),
                             img(src = "linkedin.png"),
-                            a(href="https://www.linkedin.com/in/oraclejavanet/", "OracleJavaNet"),
+                            a(target = "_blank", href="https://www.linkedin.com/in/oraclejavanet/", "OracleJavaNet"),
                             br(),
                             img(src = "twitter.png"),
-                            a(href="https://twitter.com/oraclejavanet/", "@OracleJavaNet/"))
+                            a(target = "_blank", href="https://twitter.com/oraclejavanet/", "@OracleJavaNet/"))
                )
     )
 )

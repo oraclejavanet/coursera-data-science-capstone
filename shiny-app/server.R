@@ -1,6 +1,6 @@
 # server.R
 # Author: Jeffrey M. Hunter
-# Date: 25-JUL-2019
+# Date: 27-JUL-2019
 # Description: Shiny Server, Coursera Data Science Capstone Final Project
 # GitHub: https://github.com/oraclejavanet/coursera-data-science-capstone
 
@@ -9,6 +9,13 @@ initialPrediction <- readRDS("./data/first-three-predictions.RData")
 freq2ngram <- readRDS("./data/bigram.RData")
 freq3ngram <- readRDS("./data/trigram.RData")
 freq4ngram <- readRDS("./data/quadgram.RData")
+
+# load bad words file
+badWordsFile <- "data/full-list-of-bad-words_text-file_2018_07_30.txt"
+con <- file(badWordsFile, open = "r")
+profanity <- readLines(con, encoding = "UTF-8", skipNul = TRUE)
+profanity <- iconv(profanity, "latin1", "ASCII", sub = "")
+close(con)
 
 predictionMatch <- function(userInput, ngrams) {
 
@@ -51,24 +58,39 @@ predictionMatch <- function(userInput, ngrams) {
 
 cleanInput <- function(input) {
 
+    # debug
+    #print(paste0("input: ", input))
+
     if (input == "" | is.na(input)) {
         return("")
     }
 
     input <- tolower(input)
-    input <- stripWhitespace(input)
+
+    # remove URL, email addresses and Twitter handles
+    input <- gsub("(f|ht)tp(s?)://(.*)[.][a-z]+", "", input, ignore.case = FALSE, perl = TRUE)
+    input <- gsub("\\S+[@]\\S+", "", input, ignore.case = FALSE, perl = TRUE)
+    input <- gsub("@[^\\s]+", "", input, ignore.case = FALSE, perl = TRUE)
 
     # remove ordinal numbers
     input <- gsub("[0-9](?:st|nd|rd|th)", "", input, ignore.case = FALSE, perl = TRUE)
 
-    # remove punctuation
-    input <- gsub("[.\\-!]", " ", input, ignore.case = FALSE, perl = TRUE)
+    # remove profane words
+    input <- removeWords(input, profanity)
 
-    #remove punctuation, leaving '
+    # remove punctuation
     input <- gsub("[^\\p{L}'\\s]+", "", input, ignore.case = FALSE, perl = TRUE)
+
+    # remove punctuation (leaving ')
+    input <- gsub("[.\\-!]", " ", input, ignore.case = FALSE, perl = TRUE)
 
     # trim leading and trailing whitespace
     input <- gsub("^\\s+|\\s+$", "", input)
+    input <- stripWhitespace(input)
+
+    # debug
+    #print(paste0("output: ", input))
+    #print("-------------------------------------")
 
     if (input == "" | is.na(input)) {
         return("")

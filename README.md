@@ -50,5 +50,5 @@ if available on RPubs.
 
 * Final project submission (Presentation): <a target="_blank"  href="http://rpubs.com/OracleJavaNet/coursera_data_science_capstone">http://rpubs.com/OracleJavaNet/coursera_data_science_capstone/</a>
 
-* Source code files available on GitHub: <a target="_blank"  href="https://github.com/oraclejavanet/coursera-data-science-capstone/">https://github.com/oraclejavanet/coursera-data-science-capstone/</a>
+* Source code files available on GitHub: <a target="_blank"   href="https://github.com/oraclejavanet/coursera-data-science-capstone/">https://github.com/oraclejavanet/coursera-data-science-capstone/</a>
 

@@ -42,7 +42,7 @@ This repository contains the `ui.R` and `server.R` source code files for the
 developed Shiny application as well as the RStudio Presenter files.
 
 The Shiny application is hosted on shinyapps.io and the Presentation (slides)
-if available on RPubs.
+are available on RPubs.
 
 ##### Links
 

@@ -30,7 +30,7 @@ predictive model.
 
 ##### Links
 
-* Milestone Report available on RPubs: <a href="http://rpubs.com/OracleJavaNet/coursera-data-science-milestone-report">http://rpubs.com/OracleJavaNet/coursera-data-science-milestone-report</a>
+* Milestone Report available on RPubs: <a target="_blank"  href="http://rpubs.com/OracleJavaNet/coursera-data-science-milestone-report">http://rpubs.com/OracleJavaNet/coursera-data-science-milestone-report</a>
 
 ### Final Project Submission
 
@@ -46,9 +46,9 @@ if available on RPubs.
 
 ##### Links
 
-* Final project submission (Shiny App): <a href="https://jhunter.shinyapps.io/coursera-data-science-capstone/">https://jhunter.shinyapps.io/coursera-data-science-capstone/</a>
+* Final project submission (Shiny App): <a target="_blank"  href="https://jhunter.shinyapps.io/coursera-data-science-capstone/">https://jhunter.shinyapps.io/coursera-data-science-capstone/</a>
 
-* Final project submission (Presentation): <a href="http://rpubs.com/OracleJavaNet/coursera_data_science_capstone">http://rpubs.com/OracleJavaNet/coursera_data_science_capstone/</a>
+* Final project submission (Presentation): <a target="_blank"  href="http://rpubs.com/OracleJavaNet/coursera_data_science_capstone">http://rpubs.com/OracleJavaNet/coursera_data_science_capstone/</a>
 
-* Source code files available on GitHub: <a href="https://github.com/oraclejavanet/coursera-data-science-capstone/">https://github.com/oraclejavanet/coursera-data-science-capstone/</a>
+* Source code files available on GitHub: <a target="_blank"  href="https://github.com/oraclejavanet/coursera-data-science-capstone/">https://github.com/oraclejavanet/coursera-data-science-capstone/</a>
 

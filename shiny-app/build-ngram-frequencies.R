@@ -1,6 +1,6 @@
 # build-ngram-frequencies.R
 # Author: Jeffrey M. Hunter
-# Date: 24-JUL-2019
+# Date: 27-JUL-2019
 # Description: Prepare n-gram frequencies
 # GitHub: https://github.com/oraclejavanet/coursera-data-science-capstone
 
@@ -123,12 +123,25 @@ if (!file.exists(badWordsFile)) {
     rm(tempFile)
 }
 
-
-
+# need to refactor with addition of new words/phrase to exclude (email, twitter)...
 
 # remove variables no longer needed to free up memory
 rm(badWordsURL, badWordsFile)
 
+# ------------------------------------------------------------------------------
+# Build corpus
+# ------------------------------------------------------------------------------
 
+# need to refactor corpus to VCorpuss...
 
+# ------------------------------------------------------------------------------
+# Build n-gram frequencies
+# ------------------------------------------------------------------------------
+
+# need to refactor dfm with new optimizations...
+
+# saveRDS(init_three_predictions, "data/first-three-predictions.RData")
+# saveRDS(bigram_dfm, "data/bigram.RData")
+# saveRDS(trigram_dfm, "data/trigram.RData")
+# saveRDS(quadgram_dfm, "data/quadgram.RData")
 

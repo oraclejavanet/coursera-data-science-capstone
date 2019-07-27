@@ -1,0 +1,12 @@
+name: coursera-data-science-capstone
+title: coursera-data-science-capstone
+username:
+account: jhunter
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1054150
+bundleId: 2270306
+url: https://jhunter.shinyapps.io/coursera-data-science-capstone/
+when: 1564267840.47923
+asMultiple: FALSE
+asStatic: FALSE

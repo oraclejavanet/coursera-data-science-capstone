@@ -67,10 +67,11 @@ cleanInput <- function(input) {
 
     input <- tolower(input)
 
-    # remove URL, email addresses and Twitter handles
+    # remove URL, email addresses, Twitter handles and hash tags
     input <- gsub("(f|ht)tp(s?)://(.*)[.][a-z]+", "", input, ignore.case = FALSE, perl = TRUE)
     input <- gsub("\\S+[@]\\S+", "", input, ignore.case = FALSE, perl = TRUE)
     input <- gsub("@[^\\s]+", "", input, ignore.case = FALSE, perl = TRUE)
+    input <- gsub("#[^\\s]+", "", input, ignore.case = FALSE, perl = TRUE)
 
     # remove ordinal numbers
     input <- gsub("[0-9](?:st|nd|rd|th)", "", input, ignore.case = FALSE, perl = TRUE)

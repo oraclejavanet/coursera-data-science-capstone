@@ -6,21 +6,25 @@ autosize: true
 transition: rotate
 
 Coursera Data Science Specialization<br />
+Capstone Project<br />
 Johns Hopkins University<br />
-Capstone Project
 
-
+This presentation highlights the Next Word Predict app
+including an introduction to the application user
+interface and information about the text prediction
+algorithm.
 
 ![SwiftKey, JHU & Coursera Logo](images/logos-footer.png)
 
 Objective
 ========================================================
 
-For more details on authoring R presentations please visit <https://support.rstudio.com/hc/en-us/articles/200486468>.
+The primary goal for the capstone project was to create
+a Shiny app that uses a text prediction algorithm to
+predict the next word(s) based on text entered by a user.
 
-- Bullet 1
-- Bullet 2
-- Bullet 3
+This application will suggest the next word in a sentence using an n-gram algorithm
+Skills: include natural language processing and text mining.
 
 Shiny Application
 ========================================================
@@ -28,6 +32,10 @@ Shiny Application
 
 
 Application User Interface
+========================================================
+
+
+Additional Information
 ========================================================
 
 

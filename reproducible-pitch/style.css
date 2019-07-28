@@ -1,0 +1,12 @@
+/*
+ * +-------------------------------------------------------------------+
+ * |                    style.css v1.0.0 - RStudio                     |
+ * +-------------------------------------------------------------------+
+ */
+
+p {
+    font-family: Helvetica Neue,Arial,Helvetica,Geneva,sans-serif;
+    color: #000000;
+    font-size: 100pt;
+    text-decoration: none;
+}

@@ -71,30 +71,31 @@ shinyUI(
                         div("My name is Jeffrey M. Hunter and I am a
                             Senior Database Administrator and Application
                             Programmer for ",
-                            a(href = "https://www.dbazone.com/", "The DBA Zone, Inc."),".",
+                            a(target = "_blank", href = "https://www.dbazone.com/", "The DBA Zone, Inc."),".",
                             "I am an Oracle Certified Professional, Oracle ACE
                             and Author with over 25 years of experience working
-                            with Oracle, MySQL, MongoDB and PostgreSQL database
-                            technologies.",
+                            with Oracle, MySQL, MariaDB, MongoDB and PostgreSQL
+                            database technologies.",
                             br(),
                             br(),
                             "My work includes advanced performance tuning, Java
-                            and PL/SQL programming, developing high availability
-                            solutions, capacity planning, database security and
-                            physical / logical database design in a UNIX / Linux
-                            server environment.",
+                            and PL/SQL programming, developing highly available
+                            database solutions, capacity planning, database
+                            security and physical / logical database design in a
+                            UNIX / Linux server environment.",
                             br(),
                             br(),
-                            "My other specialties include Data Analysis in R,
-                            Python and Oracle R Enterprise, mathematics and
-                            programming language processors in Java and C.",
+                            "My other specialties include mathematics,
+                            developing statistical models, predictive analytics
+                            and statistical data analysis in R, Oracle R
+                            Enterprise, Oracle Data Mining and Python.",
                             br(),
                             br(),
                             img(src = "linkedin.png"),
                             a(target = "_blank", href="https://www.linkedin.com/in/oraclejavanet/", "OracleJavaNet"),
                             br(),
                             img(src = "twitter.png"),
-                            a(target = "_blank", href="https://twitter.com/oraclejavanet/", "@OracleJavaNet/"))
+                            a(target = "_blank", href="https://twitter.com/oraclejavanet/", "OracleJavaNet"))
                )
     )
 )

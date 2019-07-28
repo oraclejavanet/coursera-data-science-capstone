@@ -5,8 +5,8 @@ account: jhunter
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 1054150
-bundleId: 2270306
+bundleId: 2272046
 url: https://jhunter.shinyapps.io/coursera-data-science-capstone/
-when: 1564267840.47923
+when: 1564350273.10219
 asMultiple: FALSE
 asStatic: FALSE

@@ -1,7 +1,7 @@
 Next Word Predict
 ========================================================
 author: Jeffrey M. Hunter
-date: 27 July, 2019
+date: 28 July, 2019
 autosize: true
 transition: rotate
 class: smaller
@@ -11,12 +11,11 @@ Coursera Data Science Specialization<br />
 Capstone Project<br />
 Johns Hopkins University<br />
 
-![SwiftKey, JHU & Coursera Logo](images/logos-footer.png)
-
 ========================================================
 # **Objective**
 
-This presentation highlights the Next Word Predict app
+<small>
+This presentation features the Next Word Predict app
 including an introduction to the application user
 interface and details about the text prediction
 algorithm.
@@ -33,18 +32,55 @@ The source code files can be found on GitHub:
     <li><a target="_blank" href="https://github.com/oraclejavanet/coursera-data-science-capstone/">https://github.com/oraclejavanet/coursera-data-science-capstone/</a></li>
 </ul>
 
+Check back regularly as the codebase is continually being updated with
+new features and improvements.
+</small>
+
 ========================================================
 # **Shiny Application**
 
+<small>
 Next Word Predict is a Shiny app that uses a text
 prediction algorithm to predict the next word(s) based on
 text entered by a user.
 
 The application will suggest the next word in a sentence
-using an n-gram algorithm.
+using an n-gram algorithm. An n-gram is a contiguous sequence
+of *n* words from a given sequence of text.
 
+The text used to build the predictive text model came from a
+large corpus of blogs, news and twitter data. N-grams were
+extracted from the corpus and then used to build the
+predictive text model.
 
-Skills: include natural language processing and text mining.
+Various methods were explored to improve speed and
+accuracy using natural language processing and text mining
+techniques.
+</small>
+
+========================================================
+# **The Predictive Text Model**
+
+<small>
+The predictive text model was built from a sample of
+800,000 lines extracted from the large corpus of blogs,
+news and twitter data.
+
+The sample data was then
+tokenized and cleaned using the **tm** package and a number
+of regular expressions using the **gsub** function. As
+part of the cleaning process the data was converted to
+lowercase, removed all non-ascii characters, URLs,
+email addresses, Twitter handles, hash tags, ordinal numbers,
+profane words, punctuation and whitespace. The data was
+then split into tokens (n-grams).
+
+As text is entered by the user, the algorithm iterates
+from longest n-gram (4-gram) to shortest (2-gram) to
+detect a match. The predicted next word is considered using
+the longest, most frequent matching n-gram. The algorithm
+makes use of a simple back-off strategy.
+</small>
 
 ========================================================
 # **Application User Interface**
@@ -61,20 +97,3 @@ of the user interface.
 </small>
 
 <a target="_blank" href="http://www.idevelopment.info/data/DataScience/uploads/next-word-predict-ui-large.png"><img src="images/next-word-predict-ui.png"></a>
-
-========================================================
-# **About Me**
-
-My name is Jeffrey M. Hunter and I am a Senior Database
-Administrator and Application Programmer for
-<a target="_blank" href="https://www.dbazone.com/">The DBA Zone, Inc.</a>.
-I am an Oracle Certified Professional, Oracle ACE and Author
-with over 25 years of experience working with Oracle, MySQL,
-MongoDB and PostgreSQL database technologies.
-
-My specialties include performance tuning, developing high
-availability solutions, mathematics and Data Analysis in R, Python
-and Oracle R Enterprise.
-
-* Linkedin: [OracleJavaNet](https://www.linkedin.com/in/oraclejavanet/)
-* Twitter: [@OracleJavaNet](https://twitter.com/oraclejavanet/)

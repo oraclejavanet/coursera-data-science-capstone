@@ -91,7 +91,7 @@ cleanInput <- function(input) {
 
     # debug
     #print(paste0("output: ", input))
-    #print("-------------------------------------")
+    #print("---------------------------------------")
 
     if (input == "" | is.na(input)) {
         return("")

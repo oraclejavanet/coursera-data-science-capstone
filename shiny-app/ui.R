@@ -88,7 +88,12 @@ shinyUI(
                             "My other specialties include mathematics,
                             developing statistical models, predictive analytics
                             and statistical data analysis in R, Oracle R
-                            Enterprise, Oracle Data Mining and Python.",
+                            Enterprise, Oracle Data Miner and Python.",
+                            br(),
+                            br(),
+                            "I graduated from Stanislaus State University in
+                            Turlock California with a Bachelor's degree in
+                            Computer Science.",
                             br(),
                             br(),
                             img(src = "linkedin.png"),

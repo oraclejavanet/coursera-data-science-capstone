@@ -12,7 +12,7 @@ library(stringi)
 # ------------------------------------------------------------------------------
 
 rm(list = ls(all.names = TRUE))
-setwd("~/repos/coursera/github-assignments/coursera-data-science-capstone/shiny-app")
+setwd("~/repos/coursera/data-science-specialization-github-assignments/coursera-data-science-capstone/shiny-app")
 
 # ------------------------------------------------------------------------------
 # Download, unzip and load the training data

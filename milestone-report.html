@@ -2850,7 +2850,7 @@ div.tocify {
 <h1 class="title toc-ignore">Coursera Capstone Project Milestone Report</h1>
 <h3 class="subtitle">Data Science Specialization from Johns Hopkins University</h3>
 <h4 class="author">Jeffrey M. Hunter</h4>
-<h4 class="date">13 July, 2019</h4>
+<h4 class="date">31 July, 2019</h4>
 
 </div>
 
@@ -2872,7 +2872,7 @@ div.tocify {
 <p>Prepare the session by loading initial packages and clearing the global workspace (including hidden objects).</p>
 <pre class="r"><code>library(knitr)
 rm(list = ls(all.names = TRUE))
-setwd(&quot;~/repos/coursera/github-assignments/coursera-data-science-capstone&quot;)</code></pre>
+setwd(&quot;~/repos/coursera/data-science-specialization-github-assignments/coursera-data-science-capstone&quot;)</code></pre>
 </div>
 <div id="load-the-data" class="section level2">
 <h2>Load the Data</h2>
@@ -3271,7 +3271,7 @@ rm(blogs, news, twitter, sampleBlogs, sampleNews, sampleTwitter)</code></pre>
 <pre class="r"><code>library(tm)
 
 # download bad words file
-badWordsURL &lt;- &quot;https://www.freewebheaders.com/wordpress/wp-content/uploads/full-list-of-bad-words_text-file_2018_07_30.zip&quot;
+badWordsURL &lt;- &quot;http://www.idevelopment.info/data/DataScience/uploads/full-list-of-bad-words_text-file_2018_07_30.zip&quot;
 badWordsFile &lt;- &quot;data/full-list-of-bad-words_text-file_2018_07_30.txt&quot;
 if (!file.exists('data')) {
     dir.create('data')

@@ -74,10 +74,7 @@ rm(con, trainURL, trainDataFile, blogsFileName, newsFileName, twitterFileName)
 set.seed(660067)
 
 # assign sample size
-sampleSize = 0.01
-
-# assign sample size (800K rows)
-##sampleSize = 800000
+sampleSize = 0.05
 
 # sample all three data sets
 sampleBlogs <- sample(blogs, length(blogs) * sampleSize, replace = FALSE)
@@ -104,8 +101,7 @@ sampleNews <- removeOutliers(sampleNews)
 sampleTwitter <- removeOutliers(sampleTwitter)
 
 # combine all three data sets into a single data set
-##sampleData <- c(sampleBlogs, sampleNews, sampleTwitter)
-sampleData <- c(sampleNews, sampleTwitter)
+sampleData <- c(sampleBlogs, sampleNews, sampleTwitter)
 
 # get number of lines and words from the sample data set
 sampleDataLines <- length(sampleData)
@@ -185,13 +181,13 @@ corpus <- corpus(sampleData)
 # ------------------------------------------------------------------------------
 
 getTopThree <- function(corpus) {
-    first <- !duplicated(corpus$variable)
+    first <- !duplicated(corpus$token)
     balance <- corpus[!first,]
     first <- corpus[first,]
-    second <- !duplicated(balance$variable)
+    second <- !duplicated(balance$token)
     balance2 <- balance[!second,]
     second <- balance[second,]
-    third <- !duplicated(balance2$variable)
+    third <- !duplicated(balance2$token)
     third <- balance2[third,]
     return(rbind(first, second, third))
 }
@@ -225,7 +221,7 @@ tokenFrequency <- function(corpus, n = 1, rem_stopw = NULL) {
 startWord <- word(corpus$documents$texts, 1)  # get first word for each document
 startWord <- tokenFrequency(startWord, n = 1, NULL)  # determine most popular start words
 startWordPrediction <- startWord$token[1:3]  # select top 3 words to start word prediction app
-saveRDS(startWordPrediction, "data/start-word-prediction-2.RData")
+saveRDS(startWordPrediction, "data/start-word-prediction2.RData")
 
 # bigram
 bigram <- tokenFrequency(corpus, n = 2, NULL)
@@ -235,17 +231,11 @@ remove(bigram)
 # trigram
 trigram <- tokenFrequency(corpus, n = 3, NULL)
 trigram <- trigram %>% filter(n > 1)
-trigram$token <- NULL
-trigram$n <- NULL
-trigram$percent <- NULL
 saveRDS(trigram, "data/trigram2.RData")
 remove(trigram)
 
 # quadgram
 quadgram <- tokenFrequency(corpus, n = 4, NULL)
 quadgram <- quadgram %>% filter(n > 1)
-quadgram$token <- NULL
-quadgram$n <- NULL
-quadgram$percent <- NULL
 saveRDS(quadgram, "data/quadgram2.RData")
 remove(quadgram)

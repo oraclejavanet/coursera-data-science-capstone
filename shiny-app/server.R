@@ -10,6 +10,11 @@ freq2ngram <- readRDS("./data/bigram.RData")
 freq3ngram <- readRDS("./data/trigram.RData")
 freq4ngram <- readRDS("./data/quadgram.RData")
 
+##initialPrediction <- readRDS("./data/start-word-prediction2.RData")
+##freq2ngram <- readRDS("./data/bigram2.RData")
+##freq3ngram <- readRDS("./data/trigram2.RData")
+##freq4ngram <- readRDS("./data/quadgram2.RData")
+
 # load bad words file
 badWordsFile <- "data/full-list-of-bad-words_text-file_2018_07_30.txt"
 con <- file(badWordsFile, open = "r")
@@ -25,6 +30,7 @@ predictionMatch <- function(userInput, ngrams) {
                             userInput[length(userInput) - 1],
                             userInput[length(userInput)])
         dataTokens <- freq4ngram %>% filter(variable == userInput3)
+        ##dataTokens <- freq4ngram %>% filter(token == userInput3)
         if (nrow(dataTokens) >= 1) {
             return(dataTokens$outcome[1:3])
         }
@@ -36,6 +42,7 @@ predictionMatch <- function(userInput, ngrams) {
     if (ngrams == 3) {
         userInput1 <- paste(userInput[length(userInput)-1], userInput[length(userInput)])
         dataTokens <- freq3ngram %>% filter(variable == userInput1)
+        ##dataTokens <- freq3ngram %>% filter(token == userInput1)
         if (nrow(dataTokens) >= 1) {
             return(dataTokens$outcome[1:3])
         }
@@ -47,6 +54,7 @@ predictionMatch <- function(userInput, ngrams) {
     if (ngrams < 3) {
         userInput1 <- userInput[length(userInput)]
         dataTokens <- freq2ngram %>% filter(variable == userInput1)
+        ##dataTokens <- freq2ngram %>% filter(token == userInput1)
         return(dataTokens$outcome[1:3])
         # backoff (1-gram not implemented for enhanced performance)
         # return(match_predict(userInput, ngrams - 1))

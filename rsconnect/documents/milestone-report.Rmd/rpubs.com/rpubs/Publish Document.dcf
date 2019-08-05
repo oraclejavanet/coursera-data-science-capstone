@@ -4,7 +4,7 @@ username:
 account: rpubs
 server: rpubs.com
 hostUrl: rpubs.com
-appId: https://api.rpubs.com/api/v1/document/512496/8047b9a1ff4b4396a98d43bebd02bce2
-bundleId: https://api.rpubs.com/api/v1/document/512496/8047b9a1ff4b4396a98d43bebd02bce2
-url: http://rpubs.com/publish/claim/512496/218284d838a5469682de3f9e75c761ae
-when: 1563067121.83731
+appId: https://api.rpubs.com/api/v1/document/516785/4f7ab674f91a4c199a2b584c08734200
+bundleId: https://api.rpubs.com/api/v1/document/516785/4f7ab674f91a4c199a2b584c08734200
+url: http://rpubs.com/OracleJavaNet/516785
+when: 1565023124.8702
